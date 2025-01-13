@@ -7,12 +7,13 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Calibrations;
+import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -23,32 +24,34 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final TalonFX m_elevator3;
   private final TalonFX m_elevator4;
 
+  // Creates two followers for running the motors in sync.
   private final Follower m_follower;
   private final Follower m_followerInv;
+
+  // Creates the class for the motion profiler.
   private final MotionMagicTorqueCurrentFOC m_motionMagicTorqueCurrentFOC;
 
   public ElevatorSubsystem() {
 
     // Initializes the TalonFX motors for the elevator.
-    m_elevator1 = new TalonFX(0);
-    m_elevator2 = new TalonFX(0);
-    m_elevator3 = new TalonFX(0);
-    m_elevator4 = new TalonFX(0);
-    //TODO: Move CAN IDs to constants folder
+    m_elevator1 = new TalonFX(Constants.ElevatorConstants.kElevator1CANID);
+    m_elevator2 = new TalonFX(Constants.ElevatorConstants.kElevator2CANID);
+    m_elevator3 = new TalonFX(Constants.ElevatorConstants.kElevator3CANID);
+    m_elevator4 = new TalonFX(Constants.ElevatorConstants.kElevator4CANID);
 
+    // initializes the motion magic motion profiler.
     m_motionMagicTorqueCurrentFOC = new MotionMagicTorqueCurrentFOC(0);
 
     // Creates a configurator for the motors in this subsystem.
     TalonFXConfiguration config = new TalonFXConfiguration();
 
     // Feedforward and PID settings for the motors in this subsystem.
-    config.Slot0.kG = 0;
-    config.Slot0.kS = 0;
-    config.Slot0.kV = 0;
-    config.Slot0.kA = 0;
-    config.Slot0.kP = 0;
-    config.Slot0.kD = 0;
-    //TODO: Move these values to Calibrations file.
+    config.Slot0.kG = Calibrations.ElevatorCalibrations.kElevatorkG;
+    config.Slot0.kS = Calibrations.ElevatorCalibrations.kElevatorkS;
+    config.Slot0.kV = Calibrations.ElevatorCalibrations.kElevatorkV;
+    config.Slot0.kA = Calibrations.ElevatorCalibrations.kElevatorkA;
+    config.Slot0.kP = Calibrations.ElevatorCalibrations.kElevatorkP;
+    config.Slot0.kD = Calibrations.ElevatorCalibrations.kElevatorkD;
     
     // Applies the configs to all the motors in this subsystem.
     m_elevator1.getConfigurator().apply(config.Slot0);  
@@ -57,9 +60,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevator4.getConfigurator().apply(config.Slot0);
 
     // Declares elevator1 as lead motor. Other motors are set to follow.
-    m_follower = new Follower(0, false);
-    m_followerInv = new Follower(0, true);
-    //TODO: Add elevator1 CAN ID from constants here
+    m_follower = new Follower(Constants.ElevatorConstants.kElevator1CANID, false);
+    m_followerInv = new Follower(Constants.ElevatorConstants.kElevator1CANID, true);
+
     m_elevator2.setControl(m_follower);
     m_elevator3.setControl(m_follower);
     m_elevator4.setControl(m_follower);
@@ -73,8 +76,9 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public void setElevatorSetpoint(double newElevatorSetpoint) {
 
-    m_elevator1.setControl(m_motionMagicTorqueCurrentFOC.withPosition(newElevatorSetpoint * 1.6925));
-    //TODO: move that number to a Constants file
+    //Sets the setpoint of elevator1 motor using the MotionMagic Motion Profiler.
+    m_elevator1.setControl(m_motionMagicTorqueCurrentFOC.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio));
+
   }
 
   @Override

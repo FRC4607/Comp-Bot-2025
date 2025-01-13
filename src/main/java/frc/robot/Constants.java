@@ -14,6 +14,24 @@ package frc.robot;
  */
 public final class Constants {
   public static class OperatorConstants {
+
     public static final int kDriverControllerPort = 0;
+
+  }
+
+  public static class ElevatorConstants {
+
+    // All of the CAN IDs for the elevator motors
+    public static final int kElevator1CANID = 0;
+    public static final int kElevator2CANID = 0;
+    public static final int kElevator3CANID = 0;
+    public static final int kElevator4CANID = 0;
+
+    public static final double kPulleyGearRatio = 1.6925;
+
+  }
+  public static class WindmillConstants{
+    public static final int kWindmillCANID = 0;
+    
   }
 }
