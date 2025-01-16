@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -45,6 +46,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Creates a configurator for the motors in this subsystem.
     TalonFXConfiguration config = new TalonFXConfiguration();
 
+    // Gravity type for this subsystem.
+    config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+
     // Feedforward and PID settings for the motors in this subsystem.
     config.Slot0.kG = Calibrations.ElevatorCalibrations.kElevatorkG;
     config.Slot0.kS = Calibrations.ElevatorCalibrations.kElevatorkS;
@@ -52,6 +56,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     config.Slot0.kA = Calibrations.ElevatorCalibrations.kElevatorkA;
     config.Slot0.kP = Calibrations.ElevatorCalibrations.kElevatorkP;
     config.Slot0.kD = Calibrations.ElevatorCalibrations.kElevatorkD;
+
+    // Configs to be used by the MotionMagicConfigs class
+    config.MotionMagic.MotionMagicCruiseVelocity = Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic;
+    config.MotionMagic.MotionMagicAcceleration = Calibrations.ElevatorCalibrations.kMaxAccelerationMotionMagic;
+    config.TorqueCurrent.PeakForwardTorqueCurrent = Calibrations.ElevatorCalibrations.kMaxElevatorCurrentPerMotor;
+    config.TorqueCurrent.PeakReverseTorqueCurrent = -Calibrations.ElevatorCalibrations.kMaxElevatorCurrentPerMotor;
     
     // Applies the configs to all the motors in this subsystem.
     m_elevator1.getConfigurator().apply(config.Slot0);  

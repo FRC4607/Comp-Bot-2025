@@ -39,6 +39,12 @@ public class WindmillSubsystem extends SubsystemBase{
         config.Slot0.kP = Calibrations.WindmillCalibrations.kWindmillkP;
         config.Slot0.kD = Calibrations.WindmillCalibrations.kWindmillkD;
 
+        // Configs to be used by the MotionMagicConfigs Class
+        config.MotionMagic.MotionMagicCruiseVelocity = Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic;
+        config.MotionMagic.MotionMagicAcceleration = Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic;
+        config.TorqueCurrent.PeakForwardTorqueCurrent = Calibrations.WindmillCalibrations.kMaxWindmillCurrentPerMotor;
+        config.TorqueCurrent.PeakReverseTorqueCurrent = -Calibrations.WindmillCalibrations.kMaxWindmillCurrentPerMotor;
+
         // applies the configs to the windmotor.
         m_windmotor.getConfigurator().apply(config);
 
