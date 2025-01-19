@@ -16,6 +16,7 @@ import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.DeviceIdentifier;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S1FloatStateValue;
@@ -94,19 +95,20 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     limitConfigs.ForwardLimitSource = ForwardLimitSourceValue.RemoteCANdiS1;
     limitConfigs.ForwardLimitRemoteSensorID = m_CaNdi.getDeviceID();
+    limitConfigs.ForwardLimitEnable = true;
+    limitConfigs.ForwardLimitAutosetPositionEnable = true;
+    limitConfigs.ForwardLimitAutosetPositionValue = 0.0;
+    m_dummy.getConfigurator().apply(limitConfigs);
 
     candiConfig.DigitalInputs.S1CloseState = S1CloseStateValue.CloseWhenLow;
     candiConfig.DigitalInputs.S1FloatState = S1FloatStateValue.PullHigh;
+    m_CaNdi.getConfigurator().apply(candiConfig);
     
     // Applies the configs to all the motors in this subsystem.
     m_elevator1.getConfigurator().apply(config.Slot0);  
     m_elevator2.getConfigurator().apply(config.Slot0);
     m_elevator3.getConfigurator().apply(config.Slot0);
     m_elevator4.getConfigurator().apply(config.Slot0);
-
-    m_CaNdi.getConfigurator().apply(candiConfig);
-
-    m_dummy.getConfigurator().apply(limitConfigs);
 
     // Declares elevator1 as lead motor. Other motors are set to follow.
     m_follower = new Follower(Constants.ElevatorConstants.kElevator1CANID, false);
@@ -138,8 +140,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("Candy Bar", m_elevator1.getFault_ForwardHardLimit().getValue());
-    SmartDashboard.putBoolean("getName()", m_elevator1.getFault_MissingHardLimitRemote().getValue());
+    SmartDashboard.putBoolean("Candy Bar", m_CaNdi.getS1Closed().getValue().booleanValue());
+    SmartDashboard.putBoolean("getName()", m_dummy.getFault_MissingHardLimitRemote().getValue().booleanValue());
   }
 
   @Override
