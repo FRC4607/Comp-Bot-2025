@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.commands.setElevatorSpeed;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -69,6 +69,11 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+        joystick.povDown().onTrue(new setElevatorSpeed(-0.05, m_elevator));
+        joystick.povDown().onFalse(new setElevatorSpeed(0, m_elevator));
+        joystick.povUp().onTrue(new setElevatorSpeed(0.05, m_elevator));
+        joystick.povUp().onFalse(new setElevatorSpeed(0, m_elevator));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }

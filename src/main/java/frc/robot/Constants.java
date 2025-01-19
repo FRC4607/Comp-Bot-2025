@@ -22,10 +22,10 @@ public final class Constants {
   public static class ElevatorConstants {
 
     // All of the CAN IDs for the elevator motors
-    public static final int kElevator1CANID = 0;
-    public static final int kElevator2CANID = 0;
-    public static final int kElevator3CANID = 0;
-    public static final int kElevator4CANID = 0;
+    public static final int kElevator1CANID = 44;
+    public static final int kElevator2CANID = 23;
+    public static final int kElevator3CANID = 45;
+    public static final int kElevator4CANID = 15;
 
     public static final double kPulleyGearRatio = 1.6925;
 

@@ -112,10 +112,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_follower = new Follower(Constants.ElevatorConstants.kElevator1CANID, false);
     m_followerInv = new Follower(Constants.ElevatorConstants.kElevator1CANID, true);
 
-    m_elevator2.setControl(m_follower);
+    m_elevator2.setControl(m_followerInv);
     m_elevator3.setControl(m_follower);
-    m_elevator4.setControl(m_follower);
-    //TODO: Set motors to follow followerInv if they need to be reversed
+    m_elevator4.setControl(m_followerInv);
   }
 
   /**
@@ -127,6 +126,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     //Sets the setpoint of elevator1 motor using the MotionMagic Motion Profiler.
     m_elevator1.setControl(m_motionMagicTorqueCurrentFOC.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio));
+
+  }
+
+  public void setElevatorVelocity(double newElevatorVelocity) {
+
+    m_elevator1.set(newElevatorVelocity);
 
   }
 
