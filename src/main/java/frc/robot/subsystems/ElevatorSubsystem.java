@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.CANdiConfigurator;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
@@ -18,6 +19,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S1FloatStateValue;
 
@@ -35,8 +37,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final TalonFX m_elevator2;
   private final TalonFX m_elevator3;
   private final TalonFX m_elevator4; 
-
-  private final TalonFX m_dummy;
 
   private final CANdi m_CaNdi;
 
@@ -56,8 +56,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevator2 = new TalonFX(Constants.ElevatorConstants.kElevator2CANID, "kachow");
     m_elevator3 = new TalonFX(Constants.ElevatorConstants.kElevator3CANID, "kachow");
     m_elevator4 = new TalonFX(Constants.ElevatorConstants.kElevator4CANID, "kachow");
-
-    m_dummy = new TalonFX(45, "kachow");
 
     m_CaNdi = new CANdi(25, "kachow");
 
@@ -98,7 +96,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     limitConfigs.ForwardLimitEnable = true;
     limitConfigs.ForwardLimitAutosetPositionEnable = true;
     limitConfigs.ForwardLimitAutosetPositionValue = 0.0;
-    m_dummy.getConfigurator().apply(limitConfigs);
+    m_elevator1.getConfigurator().apply(limitConfigs);
 
     candiConfig.DigitalInputs.S1CloseState = S1CloseStateValue.CloseWhenLow;
     candiConfig.DigitalInputs.S1FloatState = S1FloatStateValue.PullHigh;
@@ -109,6 +107,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevator2.getConfigurator().apply(config.Slot0);
     m_elevator3.getConfigurator().apply(config.Slot0);
     m_elevator4.getConfigurator().apply(config.Slot0);
+
+    m_elevator1.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator2.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator3.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator4.setNeutralMode(NeutralModeValue.Brake);
 
     // Declares elevator1 as lead motor. Other motors are set to follow.
     m_follower = new Follower(Constants.ElevatorConstants.kElevator1CANID, false);
@@ -141,7 +144,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("Candy Bar", m_CaNdi.getS1Closed().getValue().booleanValue());
-    SmartDashboard.putBoolean("getName()", m_dummy.getFault_MissingHardLimitRemote().getValue().booleanValue());
   }
 
   @Override
