@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
-  public static Command exampleAuto(ElevatorSubsystem subsystem) {
-    return Commands.sequence(new ExampleCommand(subsystem));
+  public static Command exampleAuto(ElevatorSubsystem m_elevator) {
+    return Commands.sequence(new setElevatorSpeed(0.0, m_elevator));
   }
 
   private Autos() {

@@ -30,6 +30,8 @@ public class setElevatorSpeed extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    // sets the elevator velocity.
     m_elevator.setElevatorVelocity(m_newVelocity);
   }
 

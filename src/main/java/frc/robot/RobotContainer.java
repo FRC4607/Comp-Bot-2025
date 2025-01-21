@@ -70,6 +70,7 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
+        // Basic elevator controls
         joystick.povDown().onTrue(new setElevatorSpeed(-0.15, m_elevator));
         joystick.povDown().onFalse(new setElevatorSpeed(0, m_elevator));
         joystick.povUp().onTrue(new setElevatorSpeed(0.15, m_elevator));

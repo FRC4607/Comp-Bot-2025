@@ -57,7 +57,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevator3 = new TalonFX(Constants.ElevatorConstants.kElevator3CANID, "kachow");
     m_elevator4 = new TalonFX(Constants.ElevatorConstants.kElevator4CANID, "kachow");
 
+    // initialize the CANdi
     m_CaNdi = new CANdi(25, "kachow");
+    // TODO: move deviceid to Constants
 
     // initializes the motion magic motion profiler.
     m_motionMagicTorqueCurrentFOC = new MotionMagicTorqueCurrentFOC(0);
@@ -134,8 +136,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   }
 
+  /**
+   * Passes in a value for manual control of the elevator as velocity.
+   * 
+   * @param newElevatorVelocity - Motor output from a scale of 0 to 1.
+   */
   public void setElevatorVelocity(double newElevatorVelocity) {
 
+    // Sets the elevator velocity on a scale from 0 to 1.
     m_elevator1.set(newElevatorVelocity);
 
   }
