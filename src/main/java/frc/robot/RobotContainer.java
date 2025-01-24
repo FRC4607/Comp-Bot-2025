@@ -71,9 +71,9 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Basic elevator controls
-        joystick.povDown().onTrue(new setElevatorSpeed(-0.15, m_elevator));
+        joystick.povDown().onTrue(new setElevatorSpeed(-0.05, m_elevator));
         joystick.povDown().onFalse(new setElevatorSpeed(0, m_elevator));
-        joystick.povUp().onTrue(new setElevatorSpeed(0.15, m_elevator));
+        joystick.povUp().onTrue(new setElevatorSpeed(0.05, m_elevator));
         joystick.povUp().onFalse(new setElevatorSpeed(0, m_elevator));
 
         drivetrain.registerTelemetry(logger::telemeterize);

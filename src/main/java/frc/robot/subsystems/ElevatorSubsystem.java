@@ -4,22 +4,29 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.CANdiConfigurator;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.DeviceIdentifier;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
+import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S1FloatStateValue;
 
@@ -68,6 +75,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     CANdiConfiguration candiConfig = new CANdiConfiguration();
 
+    SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs();
+    
     
 
     // Creates a configurator for the motors in this subsystem.
@@ -93,12 +102,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     config.TorqueCurrent.PeakForwardTorqueCurrent = Calibrations.ElevatorCalibrations.kMaxElevatorCurrentPerMotor;
     config.TorqueCurrent.PeakReverseTorqueCurrent = -Calibrations.ElevatorCalibrations.kMaxElevatorCurrentPerMotor;
 
-    limitConfigs.ForwardLimitSource = ForwardLimitSourceValue.RemoteCANdiS1;
-    limitConfigs.ForwardLimitRemoteSensorID = m_CaNdi.getDeviceID();
-    limitConfigs.ForwardLimitEnable = true;
-    limitConfigs.ForwardLimitAutosetPositionEnable = true;
-    limitConfigs.ForwardLimitAutosetPositionValue = 0.0;
+    limitConfigs.ReverseLimitSource = ReverseLimitSourceValue.RemoteCANdiS1;
+    limitConfigs.ReverseLimitRemoteSensorID = m_CaNdi.getDeviceID();
+    limitConfigs.ReverseLimitEnable = true;
+    limitConfigs.ReverseLimitAutosetPositionEnable = true;
+    limitConfigs.ReverseLimitAutosetPositionValue = 0.0;
+
+    softLimitConfigs.ForwardSoftLimitEnable = true;
+    softLimitConfigs.ForwardSoftLimitThreshold = 88.3;
+    
     m_elevator1.getConfigurator().apply(limitConfigs);
+    m_elevator1.getConfigurator().apply(softLimitConfigs);
+    
 
     candiConfig.DigitalInputs.S1CloseState = S1CloseStateValue.CloseWhenLow;
     candiConfig.DigitalInputs.S1FloatState = S1FloatStateValue.PullHigh;
