@@ -71,22 +71,20 @@ public class ElevatorSubsystem extends SubsystemBase {
     // initializes the motion magic motion profiler.
     m_motionMagicTorqueCurrentFOC = new MotionMagicTorqueCurrentFOC(0);
     
+    // Creates a new limitconfigs
     HardwareLimitSwitchConfigs limitConfigs = new HardwareLimitSwitchConfigs();
 
+    // Creates a CANdi Configurator
     CANdiConfiguration candiConfig = new CANdiConfiguration();
 
+    // Creates a Configurator for a soft limit.
     SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs();
-    
-    
 
     // Creates a configurator for the motors in this subsystem.
     TalonFXConfiguration config = new TalonFXConfiguration();
 
-    
-
     // Gravity type for this subsystem.
     config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-
     
     // Feedforward and PID settings for the motors in this subsystem.
     config.Slot0.kG = Calibrations.ElevatorCalibrations.kElevatorkG;
@@ -102,19 +100,22 @@ public class ElevatorSubsystem extends SubsystemBase {
     config.TorqueCurrent.PeakForwardTorqueCurrent = Calibrations.ElevatorCalibrations.kMaxElevatorCurrentPerMotor;
     config.TorqueCurrent.PeakReverseTorqueCurrent = -Calibrations.ElevatorCalibrations.kMaxElevatorCurrentPerMotor;
 
+    // Configures all of the limit settings for the CANdi.
     limitConfigs.ReverseLimitSource = ReverseLimitSourceValue.RemoteCANdiS1;
     limitConfigs.ReverseLimitRemoteSensorID = m_CaNdi.getDeviceID();
     limitConfigs.ReverseLimitEnable = true;
     limitConfigs.ReverseLimitAutosetPositionEnable = true;
     limitConfigs.ReverseLimitAutosetPositionValue = 0.0;
 
+    // Configures all of the soft limit settings on the elevator1 motor
     softLimitConfigs.ForwardSoftLimitEnable = true;
     softLimitConfigs.ForwardSoftLimitThreshold = 88.3;
     
+    // Applies CANdi and Soft limits to the elevator1 motor.
     m_elevator1.getConfigurator().apply(limitConfigs);
     m_elevator1.getConfigurator().apply(softLimitConfigs);
     
-
+    // Configures the CANdi Closed (tripped) and float (open) states. These settings can vary based on the type of sensor.
     candiConfig.DigitalInputs.S1CloseState = S1CloseStateValue.CloseWhenLow;
     candiConfig.DigitalInputs.S1FloatState = S1FloatStateValue.PullHigh;
     m_CaNdi.getConfigurator().apply(candiConfig);
@@ -125,6 +126,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevator3.getConfigurator().apply(config.Slot0);
     m_elevator4.getConfigurator().apply(config.Slot0);
 
+    // Sets the neutral mode of all of the elevator motors to Brake Mode.
     m_elevator1.setNeutralMode(NeutralModeValue.Brake);
     m_elevator2.setNeutralMode(NeutralModeValue.Brake);
     m_elevator3.setNeutralMode(NeutralModeValue.Brake);
@@ -134,6 +136,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_follower = new Follower(Constants.ElevatorConstants.kElevator1CANID, false);
     m_followerInv = new Follower(Constants.ElevatorConstants.kElevator1CANID, true);
 
+    // Setting the follower mode that each motor will follow.
     m_elevator2.setControl(m_followerInv);
     m_elevator3.setControl(m_follower);
     m_elevator4.setControl(m_followerInv);
