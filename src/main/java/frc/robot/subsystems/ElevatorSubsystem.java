@@ -6,17 +6,23 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Rotations;
 
+import java.io.ObjectInputFilter.Config;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.CANdiConfigurator;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.DeviceIdentifier;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -47,9 +53,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private final CANdi m_CaNdi;
 
+  private boolean m_pastCaNdi;
+
   // Creates two followers for running the motors in sync.
   private final Follower m_follower;
   private final Follower m_followerInv;
+
+  private TalonFXConfiguration m_config;
+
+  private final MotionMagicVoltage m_request;
 
   // 
 
@@ -70,46 +82,55 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // initializes the motion magic motion profiler.
     m_motionMagicTorqueCurrentFOC = new MotionMagicTorqueCurrentFOC(0);
-    
-    // Creates a new limitconfigs
-    HardwareLimitSwitchConfigs limitConfigs = new HardwareLimitSwitchConfigs();
 
     // Creates a CANdi Configurator
     CANdiConfiguration candiConfig = new CANdiConfiguration();
 
-    // Creates a Configurator for a soft limit.
-    SoftwareLimitSwitchConfigs softLimitConfigs = new SoftwareLimitSwitchConfigs();
+
+    final MotionMagicVoltage request = new MotionMagicVoltage(0);
+
+    m_request = request;
 
     // Creates a configurator for the motors in this subsystem.
     TalonFXConfiguration config = new TalonFXConfiguration();
 
+    Slot0Configs slot0Configs = config.Slot0;
+
+    MotionMagicConfigs magicConfigs = config.MotionMagic;
+
+    TorqueCurrentConfigs currentConfig = config.TorqueCurrent;
+
+    SoftwareLimitSwitchConfigs softLimitConfigs = config.SoftwareLimitSwitch;
+
+    HardwareLimitSwitchConfigs limitConfigs = config.HardwareLimitSwitch;
+
     // Gravity type for this subsystem.
-    config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+    slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
     
     // Feedforward and PID settings for the motors in this subsystem.
-    config.Slot0.kG = Calibrations.ElevatorCalibrations.kElevatorkG;
-    config.Slot0.kS = Calibrations.ElevatorCalibrations.kElevatorkS;
-    config.Slot0.kV = Calibrations.ElevatorCalibrations.kElevatorkV;
-    config.Slot0.kA = Calibrations.ElevatorCalibrations.kElevatorkA;
-    config.Slot0.kP = Calibrations.ElevatorCalibrations.kElevatorkP;
-    config.Slot0.kD = Calibrations.ElevatorCalibrations.kElevatorkD;
+    slot0Configs.kG = Calibrations.ElevatorCalibrations.kElevatorkG;
+    slot0Configs.kS = Calibrations.ElevatorCalibrations.kElevatorkS;
+    slot0Configs.kV = Calibrations.ElevatorCalibrations.kElevatorkV;
+    slot0Configs.kA = Calibrations.ElevatorCalibrations.kElevatorkA;
+    slot0Configs.kP = Calibrations.ElevatorCalibrations.kElevatorkP;
+    slot0Configs.kD = Calibrations.ElevatorCalibrations.kElevatorkD;
 
     // Configs to be used by the MotionMagicConfigs class
-    config.MotionMagic.MotionMagicCruiseVelocity = Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic;
-    config.MotionMagic.MotionMagicAcceleration = Calibrations.ElevatorCalibrations.kMaxAccelerationMotionMagic;
-    config.TorqueCurrent.PeakForwardTorqueCurrent = Calibrations.ElevatorCalibrations.kMaxElevatorCurrentPerMotor;
-    config.TorqueCurrent.PeakReverseTorqueCurrent = -Calibrations.ElevatorCalibrations.kMaxElevatorCurrentPerMotor;
+    magicConfigs.MotionMagicCruiseVelocity = Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic;
+    magicConfigs.MotionMagicAcceleration = Calibrations.ElevatorCalibrations.kMaxAccelerationMotionMagic;
+    currentConfig.PeakForwardTorqueCurrent = Calibrations.ElevatorCalibrations.kMaxElevatorCurrentPerMotor;
+    currentConfig.PeakReverseTorqueCurrent = -Calibrations.ElevatorCalibrations.kMaxElevatorCurrentPerMotor;
 
     // Configures all of the limit settings for the CANdi.
     limitConfigs.ReverseLimitSource = ReverseLimitSourceValue.RemoteCANdiS1;
     limitConfigs.ReverseLimitRemoteSensorID = m_CaNdi.getDeviceID();
     limitConfigs.ReverseLimitEnable = true;
-    limitConfigs.ReverseLimitAutosetPositionEnable = true;
-    limitConfigs.ReverseLimitAutosetPositionValue = 0.0;
+    //limitConfigs.ReverseLimitAutosetPositionEnable = m_CaNdi.getS1Closed().hasUpdated();
+    //limitConfigs.ReverseLimitAutosetPositionValue = 0.0;
 
     // Configures all of the soft limit settings on the elevator1 motor
     softLimitConfigs.ForwardSoftLimitEnable = true;
-    softLimitConfigs.ForwardSoftLimitThreshold = 88.3;
+    softLimitConfigs.ForwardSoftLimitThreshold = 87;
     
     // Applies CANdi and Soft limits to the elevator1 motor.
     m_elevator1.getConfigurator().apply(limitConfigs);
@@ -121,16 +142,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_CaNdi.getConfigurator().apply(candiConfig);
     
     // Applies the configs to all the motors in this subsystem.
-    m_elevator1.getConfigurator().apply(config.Slot0);  
-    m_elevator2.getConfigurator().apply(config.Slot0);
-    m_elevator3.getConfigurator().apply(config.Slot0);
-    m_elevator4.getConfigurator().apply(config.Slot0);
+    m_elevator1.getConfigurator().apply(config);  
+    m_elevator2.getConfigurator().apply(config);
+    m_elevator3.getConfigurator().apply(config);
+    m_elevator4.getConfigurator().apply(config);
 
     // Sets the neutral mode of all of the elevator motors to Brake Mode.
-    m_elevator1.setNeutralMode(NeutralModeValue.Brake);
-    m_elevator2.setNeutralMode(NeutralModeValue.Brake);
-    m_elevator3.setNeutralMode(NeutralModeValue.Brake);
-    m_elevator4.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator1.setNeutralMode(NeutralModeValue.Coast);
+    m_elevator2.setNeutralMode(NeutralModeValue.Coast);
+    m_elevator3.setNeutralMode(NeutralModeValue.Coast);
+    m_elevator4.setNeutralMode(NeutralModeValue.Coast);
 
     // Declares elevator1 as lead motor. Other motors are set to follow.
     m_follower = new Follower(Constants.ElevatorConstants.kElevator1CANID, false);
@@ -150,7 +171,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setElevatorSetpoint(double newElevatorSetpoint) {
 
     //Sets the setpoint of elevator1 motor using the MotionMagic Motion Profiler.
-    m_elevator1.setControl(m_motionMagicTorqueCurrentFOC.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio));
+    //m_elevator1.setControl(m_motionMagicTorqueCurrentFOC.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio));
+    m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio));
 
   }
 
@@ -169,6 +191,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    if ((m_CaNdi.getS1Closed().getValue().booleanValue() != m_pastCaNdi) && (m_pastCaNdi == false)) {
+      m_elevator1.setPosition(0);
+    }
+    m_pastCaNdi = m_CaNdi.getS1Closed().getValue().booleanValue();
     SmartDashboard.putBoolean("Candy Bar", m_CaNdi.getS1Closed().getValue().booleanValue());
   }
 
@@ -176,4 +202,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
   }
+
+
 }
