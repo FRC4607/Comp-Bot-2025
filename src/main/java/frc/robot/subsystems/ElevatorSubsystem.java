@@ -132,10 +132,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     softLimitConfigs.ForwardSoftLimitEnable = true;
     softLimitConfigs.ForwardSoftLimitThreshold = 87;
     
-    // Applies CANdi and Soft limits to the elevator1 motor.
-    m_elevator1.getConfigurator().apply(limitConfigs);
-    m_elevator1.getConfigurator().apply(softLimitConfigs);
-    
     // Configures the CANdi Closed (tripped) and float (open) states. These settings can vary based on the type of sensor.
     candiConfig.DigitalInputs.S1CloseState = S1CloseStateValue.CloseWhenLow;
     candiConfig.DigitalInputs.S1FloatState = S1FloatStateValue.PullHigh;
