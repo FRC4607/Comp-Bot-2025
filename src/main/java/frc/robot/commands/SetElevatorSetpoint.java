@@ -4,22 +4,23 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ElevatorSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.ElevatorSubsystem;
 
-/** An example command that uses an example subsystem. */
-public class ExampleCommand extends Command {
-  private final ElevatorSubsystem m_elevator;
+/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+public class SetElevatorSetpoint extends Command {
 
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param elevator The subsystem used by this command.
-   */
-  public ExampleCommand(ElevatorSubsystem elevator) {
+  private ElevatorSubsystem m_elevator;
+
+  private double m_newElevatorSetpoint;
+
+  /** Creates a new SetElevatorSetpoint. */
+  public SetElevatorSetpoint(double newElevatorSetpoint, ElevatorSubsystem elevator) {
     m_elevator = elevator;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(elevator);
+    m_newElevatorSetpoint = newElevatorSetpoint;
+
+    addRequirements(m_elevator);
+
   }
 
   // Called when the command is initially scheduled.
@@ -28,7 +29,11 @@ public class ExampleCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+
+    m_elevator.setElevatorSetpoint(m_newElevatorSetpoint);
+
+  }
 
   // Called once the command ends or is interrupted.
   @Override
