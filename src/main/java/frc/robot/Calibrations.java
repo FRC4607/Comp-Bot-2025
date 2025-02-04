@@ -25,8 +25,8 @@ public class Calibrations {
     public static class WindmillCalibrations {
 
         // All of the PID and Feedforward gains for the MotionMagic Motion profiler.
-        public static final double kWindmillkG = 0;
-        public static final double kWindmillkS = 0;
+        public static final double kWindmillkG = 0.435;
+        public static final double kWindmillkS = 0.21;
         public static final double kWindmillkV = 0;
         public static final double kWindmillkA = 0;
         public static final double kWindmillkP = 0;

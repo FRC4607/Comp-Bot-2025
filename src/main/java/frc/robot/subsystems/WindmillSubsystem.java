@@ -55,11 +55,10 @@ public class WindmillSubsystem extends SubsystemBase{
 
         generalConfig.ContinuousWrap = true;
 
-        feedbackConfig.FeedbackRemoteSensorID = 0;
-        feedbackConfig.FeedbackRotorOffset = 0;
+        feedbackConfig.FeedbackRemoteSensorID = 3;
         feedbackConfig.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-        feedbackConfig.RotorToSensorRatio = 0;
-        feedbackConfig.SensorToMechanismRatio = 1;
+        feedbackConfig.RotorToSensorRatio = -1;
+        feedbackConfig.SensorToMechanismRatio = -1;
         // TODO: Move these values to Constants
 
         // Configs to be used by the MotionMagicConfigs Class
