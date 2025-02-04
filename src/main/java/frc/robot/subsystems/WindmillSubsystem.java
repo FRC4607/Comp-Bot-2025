@@ -5,7 +5,10 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Calibrations;
@@ -30,6 +33,10 @@ public class WindmillSubsystem extends SubsystemBase{
         // Creates the configurator for the motor.
         TalonFXConfiguration config = new TalonFXConfiguration();
 
+        ClosedLoopGeneralConfigs generalConfig = config.ClosedLoopGeneral;
+
+        FeedbackConfigs feedbackConfig = config.Feedback;
+
         // Sets the mode for the kG value to a cosine function (multiplies it by 1 when horizontal, 0 when vertical, and fills in everything in between)
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
@@ -40,6 +47,14 @@ public class WindmillSubsystem extends SubsystemBase{
         config.Slot0.kA = Calibrations.WindmillCalibrations.kWindmillkA;
         config.Slot0.kP = Calibrations.WindmillCalibrations.kWindmillkP;
         config.Slot0.kD = Calibrations.WindmillCalibrations.kWindmillkD;
+
+        generalConfig.ContinuousWrap = true;
+
+        feedbackConfig.FeedbackRemoteSensorID = 0;
+        feedbackConfig.FeedbackRotorOffset = 0;
+        feedbackConfig.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+        feedbackConfig.RotorToSensorRatio = 0;
+        feedbackConfig.SensorToMechanismRatio = 1;
 
         // Configs to be used by the MotionMagicConfigs Class
         config.MotionMagic.MotionMagicCruiseVelocity = Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic;
