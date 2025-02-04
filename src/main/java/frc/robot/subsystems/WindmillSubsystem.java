@@ -2,13 +2,17 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Calibrations;
@@ -20,7 +24,7 @@ public class WindmillSubsystem extends SubsystemBase{
     private final TalonFX m_windmotor;
 
     // Creates the motion profiler for the arm.
-    private final MotionMagicTorqueCurrentFOC m_motionMagicTorqueCurrentFOC;
+    private final DynamicMotionMagicVoltage m_voltage;
 
     public WindmillSubsystem() {
 
@@ -28,7 +32,8 @@ public class WindmillSubsystem extends SubsystemBase{
         m_windmotor = new TalonFX(Constants.WindmillConstants.kWindmillCANID);
        
         // Initializes the motion profiler.
-        m_motionMagicTorqueCurrentFOC = new MotionMagicTorqueCurrentFOC(0);
+        m_voltage = new DynamicMotionMagicVoltage(0, Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic, Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic, 0);
+        // TODO: Define Motion Magic Jerk and Starting position in Calibrations
 
         // Creates the configurator for the motor.
         TalonFXConfiguration config = new TalonFXConfiguration();
@@ -55,10 +60,9 @@ public class WindmillSubsystem extends SubsystemBase{
         feedbackConfig.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         feedbackConfig.RotorToSensorRatio = 0;
         feedbackConfig.SensorToMechanismRatio = 1;
+        // TODO: Move these values to Constants
 
         // Configs to be used by the MotionMagicConfigs Class
-        config.MotionMagic.MotionMagicCruiseVelocity = Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic;
-        config.MotionMagic.MotionMagicAcceleration = Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic;
         config.TorqueCurrent.PeakForwardTorqueCurrent = Calibrations.WindmillCalibrations.kMaxWindmillCurrentPerMotor;
         config.TorqueCurrent.PeakReverseTorqueCurrent = -Calibrations.WindmillCalibrations.kMaxWindmillCurrentPerMotor;
 
@@ -78,10 +82,22 @@ public class WindmillSubsystem extends SubsystemBase{
      * 
      * @param newWindmillSetpoint The new setpoint in degrees.
      */
-    public void setWindmillSetpoint(double newWindmillSetpoint) {
+    public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing) {
+        
+        if (isClimbing == true) {
+            m_voltage.Velocity = 1;
+            m_voltage.Acceleration = 1;
+            m_voltage.Jerk = 0;
+            // TODO: Define these values in Calibrations
+        } else {
+            m_voltage.Velocity = Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic;
+            m_voltage.Acceleration = Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic;
+            m_voltage.Jerk = 0;
+            // TODO: Define Jerk in Constants
+        }
 
         //Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
-        m_windmotor.setControl(m_motionMagicTorqueCurrentFOC.withPosition(newWindmillSetpoint / 360));
+        m_windmotor.setControl(m_voltage.withPosition(newWindmillSetpoint / 360));
 
       }
 }
