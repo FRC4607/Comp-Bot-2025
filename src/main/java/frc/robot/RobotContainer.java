@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.SetElevatorSetpoint;
+import frc.robot.commands.SetWindmillSetpoint;
+import frc.robot.commands.SetWindmillSpeed;
 import frc.robot.commands.setElevatorSpeed;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -77,9 +79,14 @@ public class RobotContainer {
         //joystick.povUp().onTrue(new setElevatorSpeed(0.05, m_elevator));
         //joystick.povUp().onFalse(new setElevatorSpeed(0, m_elevator));
 
-        joystick.povUp().onTrue(new SetElevatorSetpoint(40, m_elevator));
-        joystick.povDown().onTrue(new SetElevatorSetpoint(3.0, m_elevator));
-        joystick.povLeft().onTrue(new SetElevatorSetpoint(-0.5, m_elevator));
+        //joystick.povUp().onTrue(new SetElevatorSetpoint(40, m_elevator));
+        //joystick.povDown().onTrue(new SetElevatorSetpoint(3.0, m_elevator));
+        //joystick.povLeft().onTrue(new SetElevatorSetpoint(-0.5, m_elevator));
+
+        joystick.povUp().onTrue(new SetWindmillSetpoint(0.5, false, m_windmill));
+        joystick.povDown().onTrue(new SetWindmillSetpoint(0, false, m_windmill));
+        joystick.povRight().onTrue(new SetWindmillSetpoint(0.25, false, m_windmill));
+        joystick.povLeft().onTrue(new SetWindmillSetpoint(-0.25, false, m_windmill));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }

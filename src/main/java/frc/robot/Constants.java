@@ -31,7 +31,7 @@ public final class Constants {
 
   }
   public static class WindmillConstants{
-    public static final int kWindmillCANID = 0;
+    public static final int kWindmillCANID = 15;
     
   }
 }

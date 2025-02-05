@@ -29,7 +29,7 @@ public class Calibrations {
         public static final double kWindmillkS = 0.21;
         public static final double kWindmillkV = 0;
         public static final double kWindmillkA = 0;
-        public static final double kWindmillkP = 0;
+        public static final double kWindmillkP = 1.5;
         public static final double kWindmillkD = 0;
 
         // Motion Magic Configs for the MotionMagicConfigs Class for the Windmill
