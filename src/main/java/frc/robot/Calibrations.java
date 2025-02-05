@@ -29,11 +29,11 @@ public class Calibrations {
         public static final double kWindmillkS = 0.21;
         public static final double kWindmillkV = 0;
         public static final double kWindmillkA = 0;
-        public static final double kWindmillkP = 1.5;
+        public static final double kWindmillkP = 20;
         public static final double kWindmillkD = 0;
 
         // Motion Magic Configs for the MotionMagicConfigs Class for the Windmill
-        public static final double kMaxSpeedMotionMagic = 0.3;
+        public static final double kMaxSpeedMotionMagic = 10;
         public static final double kMaxAccelerationMotionMagic = 0.75;
         public static final double kMaxWindmillCurrentPerMotor = 40;
         // TODO: Update these values when the robot is built

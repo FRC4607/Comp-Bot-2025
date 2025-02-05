@@ -17,9 +17,8 @@ public class SetWindmillSetpoint extends Command {
 
   private double m_newWindmillSetpoint;
 
-  public SetWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing, WindmillSubsystem windmill) {
+  public SetWindmillSetpoint(double newWindmillSetpoint, WindmillSubsystem windmill) {
     m_windmill = windmill;
-    m_isClimbing = isClimbing;
     m_newWindmillSetpoint = newWindmillSetpoint;
 
     addRequirements(m_windmill);
@@ -29,7 +28,7 @@ public class SetWindmillSetpoint extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_windmill.setWindmillSetpoint(m_newWindmillSetpoint, m_isClimbing);
+    m_windmill.setWindmillSetpoint(m_newWindmillSetpoint, false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -70,10 +70,11 @@ public class WindmillSubsystem extends SubsystemBase{
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+        m_encoder.getConfigurator().apply(encoderConfig);
 
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         config.Feedback.FeedbackRemoteSensorID = m_encoder.getDeviceID();
-        config.Feedback.RotorToSensorRatio = 63.942;
+        config.Feedback.RotorToSensorRatio = 1;
         config.Feedback.SensorToMechanismRatio = 1;
         //config.Feedback.FeedbackRotorOffset = 0;
         //config.Feedback.VelocityFilterTimeConstant = 0;
@@ -85,8 +86,7 @@ public class WindmillSubsystem extends SubsystemBase{
 
         // applies the configs to the windmotor.
         m_windmotor.getConfigurator().apply(config);
-        m_encoder.getConfigurator().apply(encoderConfig);
-        m_windmotor.setNeutralMode(NeutralModeValue.Brake);
+        m_windmotor.setNeutralMode(NeutralModeValue.Coast);
     }
 
    @Override
@@ -105,7 +105,7 @@ public class WindmillSubsystem extends SubsystemBase{
     public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing) {
 
         //Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
-        m_windmotor.setControl(m_voltage.withPosition(newWindmillSetpoint));
+        m_windmotor.setControl(m_voltage.withPosition(newWindmillSetpoint * 64.04));
 
     }
 
