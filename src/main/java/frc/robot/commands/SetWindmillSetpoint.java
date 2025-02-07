@@ -28,13 +28,14 @@ public class SetWindmillSetpoint extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_windmill.setWindmillSetpoint(m_newWindmillSetpoint, false);
+    System.out.println("Initialized");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    m_windmill.setWindmillSetpoint(m_newWindmillSetpoint, false);
+    System.out.println("executed");
   }
 
   // Called once the command ends or is interrupted.

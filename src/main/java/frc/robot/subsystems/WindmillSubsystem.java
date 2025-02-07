@@ -1,6 +1,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
@@ -16,6 +18,7 @@ import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 
@@ -29,10 +32,12 @@ public class WindmillSubsystem extends SubsystemBase{
     // Creates the windmill motor.
     private final TalonFX m_windmotor;
 
+    
+
     private final CANcoder m_encoder;
 
     // Creates the motion profiler for the arm.
-    private final MotionMagicVoltage m_voltage;
+    private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
     public WindmillSubsystem() {
 
@@ -41,52 +46,37 @@ public class WindmillSubsystem extends SubsystemBase{
 
         m_encoder = new CANcoder(3, "kachow");
         // Initializes the motion profiler.
-        m_voltage = new MotionMagicVoltage(0);
-        // TODO: Define Motion Magic Jerk and Starting position in Calibrations
 
-        // Creates the configurator for the motor.
-        TalonFXConfiguration config = new TalonFXConfiguration();
+        TalonFXConfiguration cfg = new TalonFXConfiguration();
 
-        CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+        cfg.ClosedLoopGeneral.ContinuousWrap = true;
+    
+        /* Configure gear ratio */
+        FeedbackConfigs fdb = cfg.Feedback;
+        fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        fdb.FeedbackRemoteSensorID = 3;
+        fdb.SensorToMechanismRatio = 1; // 12.8 rotor rotations per mechanism rotation
+        fdb.RotorToSensorRatio = 64.04;
 
-        Slot0Configs slot0Configs = config.Slot0;
+        /* Configure Motion Magic */
+        MotionMagicConfigs mm = cfg.MotionMagic;
+        mm.withMotionMagicCruiseVelocity(RotationsPerSecond.of(0.25)) // 5 (mechanism) rotations per second cruise
+          .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(10)) // Take approximately 0.5 seconds to reach max vel
+          // Take approximately 0.1 seconds to reach max accel 
+          .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(100));
+    
+        Slot0Configs slot0 = cfg.Slot0;
+        slot0.kG = Calibrations.WindmillCalibrations.kWindmillkG;
+        slot0.kS = Calibrations.WindmillCalibrations.kWindmillkS; // Add 0.25 V output to overcome static friction
+        slot0.kV = Calibrations.WindmillCalibrations.kWindmillkV; // A velocity target of 1 rps results in 0.12 V output
+        slot0.kA = Calibrations.WindmillCalibrations.kWindmillkA; // An acceleration of 1 rps/s requires 0.01 V output
+        slot0.kP = Calibrations.WindmillCalibrations.kWindmillkP; // A position error of 0.2 rotations results in 12 V output
+        slot0.kD = Calibrations.WindmillCalibrations.kWindmillkD; // A velocity error of 1 rps results in 0.5 V output
 
-        ClosedLoopGeneralConfigs generalConfig = config.ClosedLoopGeneral;
+        slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
-        // Sets the mode for the kG value to a cosine function (multiplies it by 1 when horizontal, 0 when vertical, and fills in everything in between)
-        slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
-
-        // Feedforward and PID settings for this subsystem
-        slot0Configs.kG = Calibrations.WindmillCalibrations.kWindmillkG;
-        slot0Configs.kS = Calibrations.WindmillCalibrations.kWindmillkS;
-        slot0Configs.kV = Calibrations.WindmillCalibrations.kWindmillkV;
-        slot0Configs.kA = Calibrations.WindmillCalibrations.kWindmillkA;
-        slot0Configs.kP = Calibrations.WindmillCalibrations.kWindmillkP;
-        slot0Configs.kD = Calibrations.WindmillCalibrations.kWindmillkD;
-
-        config.ClosedLoopGeneral.ContinuousWrap = true;
-
-        // From standing behind the robot equals Clockwise Positive
-        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
-        encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-        m_encoder.getConfigurator().apply(encoderConfig);
-
-        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        config.Feedback.FeedbackRemoteSensorID = m_encoder.getDeviceID();
-        config.Feedback.RotorToSensorRatio = 1;
-        config.Feedback.SensorToMechanismRatio = 1;
-        //config.Feedback.FeedbackRotorOffset = 0;
-        //config.Feedback.VelocityFilterTimeConstant = 0;
-        // TODO: Move these values to Constants
-
-        // Configs to be used by the MotionMagicConfigs Class
-        //config.TorqueCurrent.PeakForwardTorqueCurrent = Calibrations.WindmillCalibrations.kMaxWindmillCurrentPerMotor;
-        //config.TorqueCurrent.PeakReverseTorqueCurrent = -Calibrations.WindmillCalibrations.kMaxWindmillCurrentPerMotor;
-
-        // applies the configs to the windmotor.
-        m_windmotor.getConfigurator().apply(config);
-        m_windmotor.setNeutralMode(NeutralModeValue.Coast);
+        m_windmotor.getConfigurator().apply(cfg);
+    
     }
 
    @Override
@@ -94,6 +84,7 @@ public class WindmillSubsystem extends SubsystemBase{
 
         SmartDashboard.putNumber("Windmill Position", getPosition());
         SmartDashboard.putNumber("Windmill Encoder Position", getEncoderPosition());
+        SmartDashboard.putNumber("Windmill Setpoint", getWindmillSetpoint());
         
     }
 
@@ -105,8 +96,8 @@ public class WindmillSubsystem extends SubsystemBase{
     public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing) {
 
         //Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
-        m_windmotor.setControl(m_voltage.withPosition(newWindmillSetpoint * 64.04));
-
+        m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint));
+        System.out.println("Setpoint Changed");
     }
 
     public void setWindmillSpeed(double newSpeed) {
@@ -118,6 +109,10 @@ public class WindmillSubsystem extends SubsystemBase{
     }
     public double getEncoderPosition() {
         return m_encoder.getPosition().getValueAsDouble();
+    }
+
+    public double getWindmillSetpoint() {
+        return m_request.Position;
     }
     
 
