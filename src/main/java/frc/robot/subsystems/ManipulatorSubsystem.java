@@ -11,14 +11,14 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ManupulatorSubsystem extends SubsystemBase {
+public class ManipulatorSubsystem extends SubsystemBase {
 
   private final TalonFX m_motor;
 
   /** Creates a new ManupulatorSubsystem. */
-  public ManupulatorSubsystem() {
+  public ManipulatorSubsystem() {
 
-    m_motor = new TalonFX(0);
+    m_motor = new TalonFX(48, "kachow");
 
     TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -26,6 +26,8 @@ public class ManupulatorSubsystem extends SubsystemBase {
 
     currentConfig.StatorCurrentLimitEnable = true;
     currentConfig.StatorCurrentLimit = 40;
+
+    m_motor.getConfigurator().apply(config);
   }
 
   @Override

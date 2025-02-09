@@ -5,35 +5,33 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ManipulatorSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class setElevatorSpeed extends Command {
+public class SetManipulatorSpeed extends Command {
 
-  private ElevatorSubsystem m_elevator;
-
+  private ManipulatorSubsystem m_manipulator;
   private double m_newVelocity;
-
-  /** Creates a new setElevatorSpeed. */
-  public setElevatorSpeed(double newVelocity, ElevatorSubsystem elevator) {
-    m_elevator = elevator;
+  /** Creates a new SetManipulatorSpeed. */
+  public SetManipulatorSpeed(double newVelocity, ManipulatorSubsystem manipulator) {
+    m_manipulator = manipulator;
     m_newVelocity = newVelocity;
-    
+
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_elevator);
+    addRequirements(m_manipulator);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    // sets the elevator velocity.
-    m_elevator.setElevatorVelocity(m_newVelocity);
+    m_manipulator.setVelocity(m_newVelocity);
+    System.out.println("executed");
   }
 
   // Called once the command ends or is interrupted.

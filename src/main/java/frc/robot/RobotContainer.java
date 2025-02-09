@@ -23,12 +23,14 @@ import frc.robot.commands.HumanPickupLeft;
 import frc.robot.commands.PlaceL3;
 import frc.robot.commands.Retract;
 import frc.robot.commands.SetElevatorSetpoint;
+import frc.robot.commands.SetManipulatorSpeed;
 import frc.robot.commands.SetWindmillSetpoint;
 import frc.robot.commands.SetWindmillSpeed;
 import frc.robot.commands.setElevatorSpeed;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
 
 public class RobotContainer {
@@ -46,9 +48,10 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
-    public final WindmillSubsystem m_windmill = new WindmillSubsystem();
+    private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+    private final WindmillSubsystem m_windmill = new WindmillSubsystem();
+    private final ManipulatorSubsystem m_manipulator = new ManipulatorSubsystem();
 
     public RobotContainer() {
         configureBindings();
@@ -73,10 +76,10 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
         joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -104,13 +107,15 @@ public class RobotContainer {
         joystick.povUp().onTrue(new PlaceL3(m_windmill, m_elevator));
         joystick.povLeft().onTrue(new HumanPickupLeft(m_windmill, m_elevator));
 
-
-        SmartDashboard.putData("Apply Config", new ApplyConfigs(m_windmill, m_elevator));
-
-        drivetrain.registerTelemetry(logger::telemeterize);
-    }
-
-    public Command getAutonomousCommand() {
+        m_manipulator.setDefaultCommand(new SetManipulatorSpeed(joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis(), m_manipulator));
+        
+    
+                SmartDashboard.putData("Apply Config", new ApplyConfigs(m_windmill, m_elevator));
+        
+                drivetrain.registerTelemetry(logger::telemeterize);
+            }
+        
+            public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");
     }
 }
