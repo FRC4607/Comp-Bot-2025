@@ -10,11 +10,14 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.Retract;
 import frc.robot.commands.SetElevatorSetpoint;
 import frc.robot.commands.SetWindmillSetpoint;
 import frc.robot.commands.SetWindmillSpeed;
@@ -84,10 +87,14 @@ public class RobotContainer {
         //joystick.povDown().onTrue(new SetElevatorSetpoint(3.0, m_elevator));
         //joystick.povLeft().onTrue(new SetElevatorSetpoint(-0.5, m_elevator));
 
-        joystick.povUp().onTrue(new SetWindmillSetpoint(180, m_windmill));
-        joystick.povDown().onTrue(new SetWindmillSetpoint(0, m_windmill));
-        joystick.povRight().onTrue(new SetWindmillSetpoint(90, m_windmill));
-        joystick.povLeft().onTrue(new SetWindmillSetpoint(-90, m_windmill));
+        // joystick.povUp().onTrue(new SetWindmillSetpoint(180, m_windmill));
+        // joystick.povDown().onTrue(new SetWindmillSetpoint(0, m_windmill));
+        // joystick.povRight().onTrue(new SetWindmillSetpoint(90, m_windmill));
+        // joystick.povLeft().onTrue(new SetWindmillSetpoint(-90, m_windmill));
+
+        joystick.povRight().onTrue(new SequentialCommandGroup(new Retract(m_windmill), new SetWindmillSetpoint(0, m_windmill)));
+        joystick.povLeft().onTrue(new SequentialCommandGroup(new Retract(m_windmill), new SetWindmillSetpoint(180, m_windmill)));
+        joystick.povUp().onTrue(new Retract(m_windmill));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }

@@ -45,6 +45,6 @@ public class SetWindmillSetpoint extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(m_windmill.getPosition() - m_newWindmillSetpoint) < 5;
   }
 }
