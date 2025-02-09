@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Retract;
@@ -37,7 +38,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    SmartDashboard.putNumber("windmill kS", Calibrations.WindmillCalibrations.kWindmillkS);
+    SmartDashboard.putNumber("windmill kG", Calibrations.WindmillCalibrations.kWindmillkG);
+    SmartDashboard.putNumber("windmill kP", Calibrations.WindmillCalibrations.kWindmillkP);
+    SmartDashboard.putNumber("windmill kD", Calibrations.WindmillCalibrations.kWindmillkD);
 
+    SmartDashboard.putNumber("elevator kS", Calibrations.ElevatorCalibrations.kElevatorkS);
+    SmartDashboard.putNumber("elevator kG", Calibrations.ElevatorCalibrations.kElevatorkG);
+    SmartDashboard.putNumber("elevator kP", Calibrations.ElevatorCalibrations.kElevatorkP);
+    SmartDashboard.putNumber("elevator kD", Calibrations.ElevatorCalibrations.kElevatorkD);
   }
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -48,10 +57,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
+    
     CommandScheduler.getInstance().run();
   }
 
@@ -66,7 +72,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

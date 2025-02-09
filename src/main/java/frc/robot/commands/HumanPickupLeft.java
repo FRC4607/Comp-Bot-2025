@@ -10,14 +10,14 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Retract extends SequentialCommandGroup {
+public class HumanPickupLeft extends SequentialCommandGroup {
 
-  /** Creates a new Retract. */
-  public Retract(WindmillSubsystem windmill, ElevatorSubsystem elevator) {
-    // Use addRequirements() here to declare subsystem dependencies.
+  /** Creates a new HumanPickupLeft. */
+  public HumanPickupLeft(WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     super(
-      new SetWindmillSetpoint(90, 90, windmill),
-      new SetElevatorSetpoint(-0.2, 1, elevator)
+      new Retract(windmill, elevator),
+      new SetElevatorSetpoint(24, 10, elevator),
+      new SetWindmillSetpoint(225, 5, windmill)
     );
   }
 }

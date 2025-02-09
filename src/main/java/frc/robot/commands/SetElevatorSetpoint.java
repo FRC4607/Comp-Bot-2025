@@ -13,11 +13,13 @@ public class SetElevatorSetpoint extends Command {
   private ElevatorSubsystem m_elevator;
 
   private double m_newElevatorSetpoint;
+  private double m_tolerance;
 
   /** Creates a new SetElevatorSetpoint. */
-  public SetElevatorSetpoint(double newElevatorSetpoint, ElevatorSubsystem elevator) {
+  public SetElevatorSetpoint(double newElevatorSetpoint, double tolerance, ElevatorSubsystem elevator) {
     m_elevator = elevator;
     m_newElevatorSetpoint = newElevatorSetpoint;
+    m_tolerance = tolerance;
 
     addRequirements(m_elevator);
 
@@ -42,6 +44,6 @@ public class SetElevatorSetpoint extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(m_elevator.getPosition() - m_newElevatorSetpoint) < m_tolerance;
   }
 }

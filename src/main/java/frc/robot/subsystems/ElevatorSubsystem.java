@@ -144,10 +144,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevator4.getConfigurator().apply(config);
 
     // Sets the neutral mode of all of the elevator motors to Brake Mode.
-    m_elevator1.setNeutralMode(NeutralModeValue.Coast);
-    m_elevator2.setNeutralMode(NeutralModeValue.Coast);
-    m_elevator3.setNeutralMode(NeutralModeValue.Coast);
-    m_elevator4.setNeutralMode(NeutralModeValue.Coast);
+    m_elevator1.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator2.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator3.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator4.setNeutralMode(NeutralModeValue.Brake);
 
     // Declares elevator1 as lead motor. Other motors are set to follow.
     m_follower = new Follower(Constants.ElevatorConstants.kElevator1CANID, false);
@@ -157,6 +157,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevator2.setControl(m_followerInv);
     m_elevator3.setControl(m_follower);
     m_elevator4.setControl(m_followerInv);
+
+    m_config = config;
   }
 
   /**
@@ -192,12 +194,27 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     m_pastCaNdi = m_CaNdi.getS1Closed().getValue().booleanValue();
     SmartDashboard.putBoolean("Candy Bar", m_CaNdi.getS1Closed().getValue().booleanValue());
+    SmartDashboard.putNumber("Elevator Position", getPosition());
   }
 
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
   }
+
+public void editConfig() {
+  m_config.Slot0.kS = SmartDashboard.getNumber("elevator kS", Calibrations.ElevatorCalibrations.kElevatorkS);
+  m_config.Slot0.kG = SmartDashboard.getNumber("elevator kG", Calibrations.ElevatorCalibrations.kElevatorkG);
+  m_config.Slot0.kP = SmartDashboard.getNumber("elevator kP", Calibrations.ElevatorCalibrations.kElevatorkP);
+  m_config.Slot0.kD = SmartDashboard.getNumber("elevator kD", Calibrations.ElevatorCalibrations.kElevatorkD);
+
+  m_elevator1.getConfigurator().apply(m_config);
+
+}
+
+public double getPosition() {
+  return m_elevator1.getPosition().getValueAsDouble() / Constants.ElevatorConstants.kPulleyGearRatio;
+}
 
 
 }

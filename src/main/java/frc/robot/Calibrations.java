@@ -7,17 +7,17 @@ public class Calibrations {
     public static class ElevatorCalibrations {
 
         //All of the PID and Feedforward gains for the MotionMagic Motion profiler.
-        public static final double kElevatorkG = 0.02;
-        public static final double kElevatorkS = 0.145;
+        public static final double kElevatorkG = 0.19;
+        public static final double kElevatorkS = 0.02; // 0.145?
         public static final double kElevatorkV = 0.0;
         public static final double kElevatorkA = 0.0;
-        public static final double kElevatorkP = 0.5;
+        public static final double kElevatorkP = 0.3;
         public static final double kElevatorkD = 0.0;
 
         // Motion Magic Configs for the MotionMagicConfigs class for the Elevator
-        public static final double kMaxSpeedMotionMagic = 18.0;
+        public static final double kMaxSpeedMotionMagic = 60.0;
 
-        public static final double kMaxAccelerationMotionMagic = 18.0;
+        public static final double kMaxAccelerationMotionMagic = 300.0;
         public static final double kMaxElevatorCurrentPerMotor = 40;
 
     }

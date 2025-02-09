@@ -32,7 +32,7 @@ public class WindmillSubsystem extends SubsystemBase{
     // Creates the windmill motor.
     private final TalonFX m_windmotor;
 
-    
+    private TalonFXConfiguration m_config;
 
     private final CANcoder m_encoder;
 
@@ -47,29 +47,29 @@ public class WindmillSubsystem extends SubsystemBase{
         m_encoder = new CANcoder(3, "kachow");
         // Initializes the motion profiler.
 
-        TalonFXConfiguration cfg = new TalonFXConfiguration();
+        TalonFXConfiguration config = new TalonFXConfiguration();
 
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
 
-        cfg.ClosedLoopGeneral.ContinuousWrap = true;
+        config.ClosedLoopGeneral.ContinuousWrap = true;
 
         encoderConfig.MagnetSensor.MagnetOffset = Calibrations.WindmillCalibrations.kWindmillEncoderOffset;
     
         /* Configure gear ratio */
-        FeedbackConfigs fdb = cfg.Feedback;
+        FeedbackConfigs fdb = config.Feedback;
         fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         fdb.FeedbackRemoteSensorID = 3;
         fdb.SensorToMechanismRatio = 1; // 12.8 rotor rotations per mechanism rotation
         fdb.RotorToSensorRatio = 64.04;
 
         /* Configure Motion Magic */
-        MotionMagicConfigs mm = cfg.MotionMagic;
+        MotionMagicConfigs mm = config.MotionMagic;
         mm.withMotionMagicCruiseVelocity(RotationsPerSecond.of(0.25)) // 5 (mechanism) rotations per second cruise
           .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(10)) // Take approximately 0.5 seconds to reach max vel
           // Take approximately 0.1 seconds to reach max accel 
           .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(100));
     
-        Slot0Configs slot0 = cfg.Slot0;
+        Slot0Configs slot0 = config.Slot0;
         slot0.kG = Calibrations.WindmillCalibrations.kWindmillkG;
         slot0.kS = Calibrations.WindmillCalibrations.kWindmillkS; // Add 0.25 V output to overcome static friction
         slot0.kV = Calibrations.WindmillCalibrations.kWindmillkV; // A velocity target of 1 rps results in 0.12 V output
@@ -79,13 +79,15 @@ public class WindmillSubsystem extends SubsystemBase{
 
         slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
-        cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-        m_windmotor.getConfigurator().apply(cfg);
+        m_windmotor.getConfigurator().apply(config);
         m_encoder.getConfigurator().apply(encoderConfig);
+
+        m_config = config;
     
     }
 
@@ -129,6 +131,14 @@ public class WindmillSubsystem extends SubsystemBase{
     public double getWindmillSetpoint() {
         return (m_request.Position * 360) % 360;
     }
-    
+
+    public void applyConfigs() {
+        m_config.Slot0.kG = SmartDashboard.getNumber("windmill kG", Calibrations.WindmillCalibrations.kWindmillkG);
+        m_config.Slot0.kS = SmartDashboard.getNumber("windmill kS", Calibrations.WindmillCalibrations.kWindmillkS);
+        m_config.Slot0.kP = SmartDashboard.getNumber("windmill kP", Calibrations.WindmillCalibrations.kWindmillkP);
+        m_config.Slot0.kD = SmartDashboard.getNumber("windmill kD", Calibrations.WindmillCalibrations.kWindmillkD);
+
+        m_windmotor.getConfigurator().apply(m_config);
+    }
 
 }
