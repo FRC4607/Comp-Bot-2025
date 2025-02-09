@@ -79,6 +79,8 @@ public class WindmillSubsystem extends SubsystemBase{
 
         slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
+        cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
         cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
@@ -114,10 +116,10 @@ public class WindmillSubsystem extends SubsystemBase{
     }
 
     public double getPosition() {
-        return (m_windmotor.getPosition().getValueAsDouble() * 360) % 360;
+        return (((m_windmotor.getPosition().getValueAsDouble() * 360) % 360) + 360) % 360;
     }
     public double getEncoderPosition() {
-        return (m_encoder.getPosition().getValueAsDouble() * 360) % 360;
+        return (((m_encoder.getPosition().getValueAsDouble() * 360) % 360) + 360) % 360;
     }
 
     public double getRawEncoderPosition() {
