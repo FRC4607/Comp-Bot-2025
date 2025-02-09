@@ -84,10 +84,10 @@ public class RobotContainer {
         //joystick.povDown().onTrue(new SetElevatorSetpoint(3.0, m_elevator));
         //joystick.povLeft().onTrue(new SetElevatorSetpoint(-0.5, m_elevator));
 
-        joystick.povUp().onTrue(new SetWindmillSetpoint(0.5, m_windmill));
+        joystick.povUp().onTrue(new SetWindmillSetpoint(180, m_windmill));
         joystick.povDown().onTrue(new SetWindmillSetpoint(0, m_windmill));
-        joystick.povRight().onTrue(new SetWindmillSetpoint(0.25, m_windmill));
-        joystick.povLeft().onTrue(new SetWindmillSetpoint(-0.25, m_windmill));
+        joystick.povRight().onTrue(new SetWindmillSetpoint(90, m_windmill));
+        joystick.povLeft().onTrue(new SetWindmillSetpoint(-90, m_windmill));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }

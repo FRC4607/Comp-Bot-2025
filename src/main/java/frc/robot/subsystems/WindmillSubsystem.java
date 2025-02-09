@@ -49,7 +49,11 @@ public class WindmillSubsystem extends SubsystemBase{
 
         TalonFXConfiguration cfg = new TalonFXConfiguration();
 
+        CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+
         cfg.ClosedLoopGeneral.ContinuousWrap = true;
+
+        encoderConfig.MagnetSensor.MagnetOffset = Calibrations.WindmillCalibrations.kWindmillEncoderOffset;
     
         /* Configure gear ratio */
         FeedbackConfigs fdb = cfg.Feedback;
@@ -75,7 +79,11 @@ public class WindmillSubsystem extends SubsystemBase{
 
         slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
+        cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+
         m_windmotor.getConfigurator().apply(cfg);
+        m_encoder.getConfigurator().apply(encoderConfig);
     
     }
 
@@ -85,6 +93,7 @@ public class WindmillSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Windmill Position", getPosition());
         SmartDashboard.putNumber("Windmill Encoder Position", getEncoderPosition());
         SmartDashboard.putNumber("Windmill Setpoint", getWindmillSetpoint());
+        SmartDashboard.putNumber("Raw Windmill Encoder Postion", getRawEncoderPosition());
         
     }
 
@@ -96,7 +105,7 @@ public class WindmillSubsystem extends SubsystemBase{
     public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing) {
 
         //Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
-        m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint));
+        m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint / 360));
         System.out.println("Setpoint Changed");
     }
 
@@ -105,14 +114,18 @@ public class WindmillSubsystem extends SubsystemBase{
     }
 
     public double getPosition() {
-        return m_windmotor.getPosition().getValueAsDouble();
+        return (m_windmotor.getPosition().getValueAsDouble() * 360) % 360;
     }
     public double getEncoderPosition() {
-        return m_encoder.getPosition().getValueAsDouble();
+        return (m_encoder.getPosition().getValueAsDouble() * 360) % 360;
+    }
+
+    public double getRawEncoderPosition() {
+        return m_encoder.getPosition().getValueAsDouble() * 360;
     }
 
     public double getWindmillSetpoint() {
-        return m_request.Position;
+        return (m_request.Position * 360) % 360;
     }
     
 

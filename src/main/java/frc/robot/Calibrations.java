@@ -19,7 +19,6 @@ public class Calibrations {
 
         public static final double kMaxAccelerationMotionMagic = 18.0;
         public static final double kMaxElevatorCurrentPerMotor = 40;
-        // TODO: Update these values when the robot is built
 
     }
     public static class WindmillCalibrations {
@@ -33,10 +32,11 @@ public class Calibrations {
         public static final double kWindmillkD = 0;
 
         // Motion Magic Configs for the MotionMagicConfigs Class for the Windmill
-        public static final double kMaxSpeedMotionMagic = 10;
+        public static final double kMaxSpeedMotionMagic = 0.25;
         public static final double kMaxAccelerationMotionMagic = 0.75;
         public static final double kMaxWindmillCurrentPerMotor = 40;
-        // TODO: Update these values when the robot is built
+
+        public static final double kWindmillEncoderOffset = -0.439453125;
     }
 }
 
