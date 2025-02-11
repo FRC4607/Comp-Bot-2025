@@ -22,6 +22,9 @@ public class Calibrations {
 
     }
     public static class WindmillCalibrations {
+        
+        // The encoder offset for the windmill
+        public static final double kWindmillEncoderOffset = -0.439453125;
 
         // All of the PID and Feedforward gains for the MotionMagic Motion profiler.
         public static final double kWindmillkG = 0.435;
@@ -36,7 +39,18 @@ public class Calibrations {
         public static final double kMaxAccelerationMotionMagic = 0.75;
         public static final double kMaxWindmillCurrentPerMotor = 40;
 
-        public static final double kWindmillEncoderOffset = -0.439453125;
+        // The windmill will report that it is at it's setpoint if it is within this amount of degrees.
+        public static final double kWindmillTolerance = 5;
+    }
+    public static class PlacementCalibrations {
+
+        // Tolerances for the Place Command group
+        public static final double kWindmillTolerance = 1;
+        public static final double kElevatorTolerance = 5;
+
+        // Value in which the Place Command Group automatically bypasses the retract command if the 
+        // new windmill setpoint is within this many degrees of the old one.
+        public static final double kWindmillRetractBypassTolerance = 45;
     }
 }
 

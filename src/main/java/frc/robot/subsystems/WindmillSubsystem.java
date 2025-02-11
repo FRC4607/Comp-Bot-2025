@@ -52,7 +52,7 @@ public class WindmillSubsystem extends SubsystemBase{
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
 
         config.ClosedLoopGeneral.ContinuousWrap = true;
-
+        
         encoderConfig.MagnetSensor.MagnetOffset = Calibrations.WindmillCalibrations.kWindmillEncoderOffset;
     
         /* Configure gear ratio */
@@ -130,6 +130,10 @@ public class WindmillSubsystem extends SubsystemBase{
 
     public double getWindmillSetpoint() {
         return (m_request.Position * 360) % 360;
+    }
+
+    public boolean isAtPosition () {
+        return Math.abs(getPosition() - getWindmillSetpoint()) < Calibrations.WindmillCalibrations.kWindmillTolerance;
     }
 
     public void applyConfigs() {

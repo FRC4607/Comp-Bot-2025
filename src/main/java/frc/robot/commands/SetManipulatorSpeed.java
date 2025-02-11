@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ManipulatorSubsystem;
 
@@ -11,14 +13,16 @@ import frc.robot.subsystems.ManipulatorSubsystem;
 public class SetManipulatorSpeed extends Command {
 
   private ManipulatorSubsystem m_manipulator;
-  private double m_newVelocity;
+  private DoubleSupplier m_newVelocity;
+
   /** Creates a new SetManipulatorSpeed. */
-  public SetManipulatorSpeed(double newVelocity, ManipulatorSubsystem manipulator) {
+  public SetManipulatorSpeed(DoubleSupplier newVelocity, ManipulatorSubsystem manipulator) {
+    
     m_manipulator = manipulator;
     m_newVelocity = newVelocity;
-
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_manipulator);
+    
   }
 
   // Called when the command is initially scheduled.
@@ -30,8 +34,7 @@ public class SetManipulatorSpeed extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_manipulator.setVelocity(m_newVelocity);
-    System.out.println("executed");
+    m_manipulator.setVelocity(Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble(), m_newVelocity.getAsDouble()));
   }
 
   // Called once the command ends or is interrupted.

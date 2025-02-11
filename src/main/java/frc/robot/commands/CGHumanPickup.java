@@ -10,14 +10,14 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class HumanPickupLeft extends SequentialCommandGroup {
+public class CGHumanPickup extends SequentialCommandGroup {
 
   /** Creates a new HumanPickupLeft. */
-  public HumanPickupLeft(WindmillSubsystem windmill, ElevatorSubsystem elevator) {
+  public CGHumanPickup(double windmillSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     super(
       new Retract(windmill, elevator),
       new SetElevatorSetpoint(24, 10, elevator),
-      new SetWindmillSetpoint(225, 5, windmill)
+      new SetWindmillSetpoint(windmillSetpoint, 5, windmill)
     );
   }
 }

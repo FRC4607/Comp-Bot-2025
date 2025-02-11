@@ -121,6 +121,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     currentConfig.PeakForwardTorqueCurrent = Calibrations.ElevatorCalibrations.kMaxElevatorCurrentPerMotor;
     currentConfig.PeakReverseTorqueCurrent = -Calibrations.ElevatorCalibrations.kMaxElevatorCurrentPerMotor;
 
+    
+
     // Configures all of the limit settings for the CANdi.
     limitConfigs.ReverseLimitSource = ReverseLimitSourceValue.RemoteCANdiS1;
     limitConfigs.ReverseLimitRemoteSensorID = m_CaNdi.getDeviceID();
@@ -203,12 +205,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
 public void editConfig() {
-  m_config.Slot0.kS = SmartDashboard.getNumber("elevator kS", Calibrations.ElevatorCalibrations.kElevatorkS);
-  m_config.Slot0.kG = SmartDashboard.getNumber("elevator kG", Calibrations.ElevatorCalibrations.kElevatorkG);
-  m_config.Slot0.kP = SmartDashboard.getNumber("elevator kP", Calibrations.ElevatorCalibrations.kElevatorkP);
-  m_config.Slot0.kD = SmartDashboard.getNumber("elevator kD", Calibrations.ElevatorCalibrations.kElevatorkD);
+  // m_config.Slot0.kS = SmartDashboard.getNumber("elevator kS", Calibrations.ElevatorCalibrations.kElevatorkS);
+  // m_config.Slot0.kG = SmartDashboard.getNumber("elevator kG", Calibrations.ElevatorCalibrations.kElevatorkG);
+  // m_config.Slot0.kP = SmartDashboard.getNumber("elevator kP", Calibrations.ElevatorCalibrations.kElevatorkP);
+  // m_config.Slot0.kD = SmartDashboard.getNumber("elevator kD", Calibrations.ElevatorCalibrations.kElevatorkD);
 
-  m_elevator1.getConfigurator().apply(m_config);
+  // m_elevator1.getConfigurator().apply(m_config);
 
 }
 

@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ApplyConfigs;
-import frc.robot.commands.HumanPickupLeft;
-import frc.robot.commands.PlaceL3;
+import frc.robot.commands.CGHumanPickup;
+import frc.robot.commands.CGPlace;
 import frc.robot.commands.Retract;
 import frc.robot.commands.SetElevatorSetpoint;
 import frc.robot.commands.SetManipulatorSpeed;
@@ -69,7 +69,7 @@ public class RobotContainer {
             )
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
@@ -103,12 +103,23 @@ public class RobotContainer {
         // joystick.povLeft().onTrue(new SequentialCommandGroup(new Retract(m_windmill), new SetWindmillSetpoint(180, m_windmill)));
         // joystick.povLeft().onTrue(new Retract(m_windmill));
 
-        joystick.povDown().onTrue(new Retract(m_windmill, m_elevator));
-        joystick.povUp().onTrue(new PlaceL3(m_windmill, m_elevator));
-        joystick.povLeft().onTrue(new HumanPickupLeft(m_windmill, m_elevator));
+        joystick.a().and(joystick.leftBumper()).onTrue(new CGHumanPickup(225, m_windmill, m_elevator));
+        joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(30, 45, m_windmill, m_elevator));
+        joystick.povLeft().and(joystick.leftBumper()).onTrue(new CGPlace(20, 45, m_windmill, m_elevator));
+        joystick.povRight().and(joystick.leftBumper()).onTrue(new CGPlace(10, 45, m_windmill, m_elevator));
+        joystick.povDown().and(joystick.leftBumper()).onTrue(new CGPlace(10, 45, m_windmill, m_elevator));
 
-        m_manipulator.setDefaultCommand(new SetManipulatorSpeed(joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis(), m_manipulator));
-        
+        joystick.a().and(joystick.rightBumper()).onTrue(new CGHumanPickup(-45, m_windmill, m_elevator));
+        joystick.povUp().and(joystick.rightBumper()).onTrue(new CGPlace(30, 135, m_windmill, m_elevator));
+        joystick.povLeft().and(joystick.rightBumper()).onTrue(new CGPlace(20, 135, m_windmill, m_elevator));
+        joystick.povRight().and(joystick.rightBumper()).onTrue(new CGPlace(10, 135, m_windmill, m_elevator));
+        joystick.povDown().and(joystick.rightBumper()).onTrue(new CGPlace(10, 135, m_windmill, m_elevator));
+
+
+        // joystick.leftTrigger(0.1).onTrue(new SetManipulatorSpeed(0.2, m_manipulator)).onFalse(new SetManipulatorSpeed(0.0, m_manipulator));
+        // joystick.rightTrigger(0.1).onTrue(new SetManipulatorSpeed(-0.2, m_manipulator)).onFalse(new SetManipulatorSpeed(0.0, m_manipulator));
+
+        m_manipulator.setDefaultCommand(new SetManipulatorSpeed(() -> joystick.getLeftTriggerAxis() - joystick.getRightTriggerAxis(), m_manipulator));
     
                 SmartDashboard.putData("Apply Config", new ApplyConfigs(m_windmill, m_elevator));
         
