@@ -5,35 +5,32 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.WindmillSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class setElevatorSpeed extends Command {
+public class SetWindmillSpeed extends Command {
 
-  private ElevatorSubsystem m_elevator;
+  private WindmillSubsystem m_windmill;
 
-  private double m_newVelocity;
+  private double m_newWindmillSpeed;
 
-  /** Creates a new setElevatorSpeed. */
-  public setElevatorSpeed(double newVelocity, ElevatorSubsystem elevator) {
-    m_elevator = elevator;
-    m_newVelocity = newVelocity;
-    
+  /** Creates a new SetWindmillSpeed. */
+  public SetWindmillSpeed(double newWindmillSpeed, WindmillSubsystem windmill) {
+
+    m_windmill = windmill;
+    m_newWindmillSpeed = newWindmillSpeed;
+
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_elevator);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    // sets the elevator velocity.
-    m_elevator.setElevatorVelocity(m_newVelocity);
+    m_windmill.setWindmillSpeed(m_newWindmillSpeed);
   }
 
   // Called once the command ends or is interrupted.
@@ -43,6 +40,6 @@ public class setElevatorSpeed extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

@@ -10,15 +10,27 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.ApplyConfigs;
+import frc.robot.commands.CGHumanPickup;
+import frc.robot.commands.CGPlace;
+import frc.robot.commands.Retract;
 import frc.robot.commands.SetElevatorSetpoint;
+import frc.robot.commands.SetManipulatorSpeed;
+import frc.robot.commands.SetWindmillSetpoint;
+import frc.robot.commands.SetWindmillSpeed;
 import frc.robot.commands.setElevatorSpeed;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
 
 public class RobotContainer {
@@ -36,9 +48,10 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
-    public final WindmillSubsystem m_windmill = new WindmillSubsystem();
+    private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+    private final WindmillSubsystem m_windmill = new WindmillSubsystem();
+    private final ManipulatorSubsystem m_manipulator = new ManipulatorSubsystem();
 
     public RobotContainer() {
         configureBindings();
@@ -56,17 +69,17 @@ public class RobotContainer {
             )
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
         joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -77,14 +90,43 @@ public class RobotContainer {
         //joystick.povUp().onTrue(new setElevatorSpeed(0.05, m_elevator));
         //joystick.povUp().onFalse(new setElevatorSpeed(0, m_elevator));
 
-        joystick.povUp().onTrue(new SetElevatorSetpoint(40, m_elevator));
-        joystick.povDown().onTrue(new SetElevatorSetpoint(3.0, m_elevator));
-        joystick.povLeft().onTrue(new SetElevatorSetpoint(-0.5, m_elevator));
+        // joystick.povUp().onTrue(new SetElevatorSetpoint(20, m_elevator));
+        // joystick.povDown().onTrue(new SetElevatorSetpoint(3.0, m_elevator));
+        //joystick.povLeft().onTrue(new SetElevatorSetpoint(-0.5, m_elevator));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
-    }
+        // joystick.povUp().onTrue(new SetWindmillSetpoint(180, m_windmill));
+        // joystick.povDown().onTrue(new SetWindmillSetpoint(0, m_windmill));
+        // joystick.povRight().onTrue(new SetWindmillSetpoint(90, m_windmill));
+        // joystick.povLeft().onTrue(new SetWindmillSetpoint(-90, m_windmill));
 
-    public Command getAutonomousCommand() {
+        // joystick.povRight().onTrue(new SequentialCommandGroup(new Retract(m_windmill), new SetWindmillSetpoint(0, m_windmill)));
+        // joystick.povLeft().onTrue(new SequentialCommandGroup(new Retract(m_windmill), new SetWindmillSetpoint(180, m_windmill)));
+        // joystick.povLeft().onTrue(new Retract(m_windmill));
+
+        joystick.a().and(joystick.leftBumper()).onTrue(new CGHumanPickup(225, m_windmill, m_elevator));
+        joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(30, 45, m_windmill, m_elevator));
+        joystick.povLeft().and(joystick.leftBumper()).onTrue(new CGPlace(20, 45, m_windmill, m_elevator));
+        joystick.povRight().and(joystick.leftBumper()).onTrue(new CGPlace(10, 45, m_windmill, m_elevator));
+        joystick.povDown().and(joystick.leftBumper()).onTrue(new CGPlace(10, 45, m_windmill, m_elevator));
+
+        joystick.a().and(joystick.rightBumper()).onTrue(new CGHumanPickup(-45, m_windmill, m_elevator));
+        joystick.povUp().and(joystick.rightBumper()).onTrue(new CGPlace(30, 135, m_windmill, m_elevator));
+        joystick.povLeft().and(joystick.rightBumper()).onTrue(new CGPlace(20, 135, m_windmill, m_elevator));
+        joystick.povRight().and(joystick.rightBumper()).onTrue(new CGPlace(10, 135, m_windmill, m_elevator));
+        joystick.povDown().and(joystick.rightBumper()).onTrue(new CGPlace(10, 135, m_windmill, m_elevator));
+
+
+        // joystick.leftTrigger(0.1).onTrue(new SetManipulatorSpeed(0.2, m_manipulator)).onFalse(new SetManipulatorSpeed(0.0, m_manipulator));
+        // joystick.rightTrigger(0.1).onTrue(new SetManipulatorSpeed(-0.2, m_manipulator)).onFalse(new SetManipulatorSpeed(0.0, m_manipulator));
+
+        m_manipulator.setDefaultCommand(new SetManipulatorSpeed(() -> joystick.getLeftTriggerAxis() - joystick.getRightTriggerAxis(), m_manipulator));
+    
+                SmartDashboard.putData("Apply Config", new ApplyConfigs(m_windmill, m_elevator));
+        
+                drivetrain.registerTelemetry(logger::telemeterize);
+            }
+        
+            public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");
     }
 }

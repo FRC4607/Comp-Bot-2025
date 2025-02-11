@@ -25,13 +25,13 @@ public final class Constants {
     public static final int kElevator1CANID = 44;
     public static final int kElevator2CANID = 23;
     public static final int kElevator3CANID = 45;
-    public static final int kElevator4CANID = 15;
+    public static final int kElevator4CANID = 26;
 
     public static final double kPulleyGearRatio = 1.6925;
 
   }
   public static class WindmillConstants{
-    public static final int kWindmillCANID = 0;
+    public static final int kWindmillCANID = 15;
     
   }
 }

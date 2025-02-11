@@ -1,12 +1,28 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Calibrations;
 import frc.robot.Constants;
@@ -16,46 +32,73 @@ public class WindmillSubsystem extends SubsystemBase{
     // Creates the windmill motor.
     private final TalonFX m_windmotor;
 
+    private TalonFXConfiguration m_config;
+
+    private final CANcoder m_encoder;
+
     // Creates the motion profiler for the arm.
-    private final MotionMagicTorqueCurrentFOC m_motionMagicTorqueCurrentFOC;
+    private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
     public WindmillSubsystem() {
 
         // Initializes the motor on the windmill.
-        m_windmotor = new TalonFX(Constants.WindmillConstants.kWindmillCANID);
-       
-        // Initializes the motion profiler.
-        m_motionMagicTorqueCurrentFOC = new MotionMagicTorqueCurrentFOC(0);
+        m_windmotor = new TalonFX(Constants.WindmillConstants.kWindmillCANID, "kachow");
 
-        // Creates the configurator for the motor.
+        m_encoder = new CANcoder(3, "kachow");
+        // Initializes the motion profiler.
+
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        // Sets the mode for the kG value to a cosine function (multiplies it by 1 when horizontal, 0 when vertical, and fills in everything in between)
-        config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+        CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
 
-        // Feedforward and PID settings for this subsystem
-        config.Slot0.kG = Calibrations.WindmillCalibrations.kWindmillkG;
-        config.Slot0.kS = Calibrations.WindmillCalibrations.kWindmillkS;
-        config.Slot0.kV = Calibrations.WindmillCalibrations.kWindmillkV;
-        config.Slot0.kA = Calibrations.WindmillCalibrations.kWindmillkA;
-        config.Slot0.kP = Calibrations.WindmillCalibrations.kWindmillkP;
-        config.Slot0.kD = Calibrations.WindmillCalibrations.kWindmillkD;
-
-        // Configs to be used by the MotionMagicConfigs Class
-        config.MotionMagic.MotionMagicCruiseVelocity = Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic;
-        config.MotionMagic.MotionMagicAcceleration = Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic;
-        config.TorqueCurrent.PeakForwardTorqueCurrent = Calibrations.WindmillCalibrations.kMaxWindmillCurrentPerMotor;
-        config.TorqueCurrent.PeakReverseTorqueCurrent = -Calibrations.WindmillCalibrations.kMaxWindmillCurrentPerMotor;
-
-        // applies the configs to the windmotor.
-        m_windmotor.getConfigurator().apply(config);
-
+        config.ClosedLoopGeneral.ContinuousWrap = true;
         
+        encoderConfig.MagnetSensor.MagnetOffset = Calibrations.WindmillCalibrations.kWindmillEncoderOffset;
+    
+        /* Configure gear ratio */
+        FeedbackConfigs fdb = config.Feedback;
+        fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        fdb.FeedbackRemoteSensorID = 3;
+        fdb.SensorToMechanismRatio = 1; // 12.8 rotor rotations per mechanism rotation
+        fdb.RotorToSensorRatio = 64.04;
+
+        /* Configure Motion Magic */
+        MotionMagicConfigs mm = config.MotionMagic;
+        mm.withMotionMagicCruiseVelocity(RotationsPerSecond.of(0.25)) // 5 (mechanism) rotations per second cruise
+          .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(10)) // Take approximately 0.5 seconds to reach max vel
+          // Take approximately 0.1 seconds to reach max accel 
+          .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(100));
+    
+        Slot0Configs slot0 = config.Slot0;
+        slot0.kG = Calibrations.WindmillCalibrations.kWindmillkG;
+        slot0.kS = Calibrations.WindmillCalibrations.kWindmillkS; // Add 0.25 V output to overcome static friction
+        slot0.kV = Calibrations.WindmillCalibrations.kWindmillkV; // A velocity target of 1 rps results in 0.12 V output
+        slot0.kA = Calibrations.WindmillCalibrations.kWindmillkA; // An acceleration of 1 rps/s requires 0.01 V output
+        slot0.kP = Calibrations.WindmillCalibrations.kWindmillkP; // A position error of 0.2 rotations results in 12 V output
+        slot0.kD = Calibrations.WindmillCalibrations.kWindmillkD; // A velocity error of 1 rps results in 0.5 V output
+
+        slot0.GravityType = GravityTypeValue.Arm_Cosine;
+
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+
+        m_windmotor.getConfigurator().apply(config);
+        m_encoder.getConfigurator().apply(encoderConfig);
+
+        m_config = config;
+    
     }
 
    @Override
     public void periodic(){
 
+        SmartDashboard.putNumber("Windmill Position", getPosition());
+        SmartDashboard.putNumber("Windmill Encoder Position", getEncoderPosition());
+        SmartDashboard.putNumber("Windmill Setpoint", getWindmillSetpoint());
+        SmartDashboard.putNumber("Raw Windmill Encoder Postion", getRawEncoderPosition());
+        
     }
 
     /**
@@ -63,10 +106,43 @@ public class WindmillSubsystem extends SubsystemBase{
      * 
      * @param newWindmillSetpoint The new setpoint in degrees.
      */
-    public void setWindmillSetpoint(double newWindmillSetpoint) {
+    public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing) {
 
         //Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
-        m_windmotor.setControl(m_motionMagicTorqueCurrentFOC.withPosition(newWindmillSetpoint / 360));
+        m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint / 360));
+        System.out.println("Setpoint Changed");
+    }
 
-      }
+    public void setWindmillSpeed(double newSpeed) {
+        m_windmotor.set(newSpeed);
+    }
+
+    public double getPosition() {
+        return (((m_windmotor.getPosition().getValueAsDouble() * 360) % 360) + 360) % 360;
+    }
+    public double getEncoderPosition() {
+        return (((m_encoder.getPosition().getValueAsDouble() * 360) % 360) + 360) % 360;
+    }
+
+    public double getRawEncoderPosition() {
+        return m_encoder.getPosition().getValueAsDouble() * 360;
+    }
+
+    public double getWindmillSetpoint() {
+        return (m_request.Position * 360) % 360;
+    }
+
+    public boolean isAtPosition () {
+        return Math.abs(getPosition() - getWindmillSetpoint()) < Calibrations.WindmillCalibrations.kWindmillTolerance;
+    }
+
+    public void applyConfigs() {
+        m_config.Slot0.kG = SmartDashboard.getNumber("windmill kG", Calibrations.WindmillCalibrations.kWindmillkG);
+        m_config.Slot0.kS = SmartDashboard.getNumber("windmill kS", Calibrations.WindmillCalibrations.kWindmillkS);
+        m_config.Slot0.kP = SmartDashboard.getNumber("windmill kP", Calibrations.WindmillCalibrations.kWindmillkP);
+        m_config.Slot0.kD = SmartDashboard.getNumber("windmill kD", Calibrations.WindmillCalibrations.kWindmillkD);
+
+        m_windmotor.getConfigurator().apply(m_config);
+    }
+
 }

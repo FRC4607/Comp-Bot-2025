@@ -5,35 +5,39 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.WindmillSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class setElevatorSpeed extends Command {
+public class SetWindmillSetpoint extends Command {
+  /** Creates a new SetWindmillSetpoint. */
 
-  private ElevatorSubsystem m_elevator;
+  private WindmillSubsystem m_windmill;
 
-  private double m_newVelocity;
+  private boolean m_isClimbing;
 
-  /** Creates a new setElevatorSpeed. */
-  public setElevatorSpeed(double newVelocity, ElevatorSubsystem elevator) {
-    m_elevator = elevator;
-    m_newVelocity = newVelocity;
-    
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_elevator);
+  private double m_newWindmillSetpoint;
+  private double m_tolerance;
+
+  public SetWindmillSetpoint(double newWindmillSetpoint, double tolerance, WindmillSubsystem windmill) {
+    m_windmill = windmill;
+    m_newWindmillSetpoint = newWindmillSetpoint;
+    m_tolerance = tolerance;
+
+    addRequirements(m_windmill);
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("Initialized");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    // sets the elevator velocity.
-    m_elevator.setElevatorVelocity(m_newVelocity);
+    m_windmill.setWindmillSetpoint(m_newWindmillSetpoint, false);
+    System.out.println("executed");
   }
 
   // Called once the command ends or is interrupted.
@@ -43,6 +47,7 @@ public class setElevatorSpeed extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(m_windmill.getPosition() - m_newWindmillSetpoint) < m_tolerance;
+    // TODO: Move tolerance to constants file
   }
 }
