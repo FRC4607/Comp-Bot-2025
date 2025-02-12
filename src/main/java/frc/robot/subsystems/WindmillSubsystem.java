@@ -37,7 +37,7 @@ public class WindmillSubsystem extends SubsystemBase{
     private final CANcoder m_encoder;
 
     // Creates the motion profiler for the arm.
-    private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+    private final MotionMagicTorqueCurrentFOC m_request = new MotionMagicTorqueCurrentFOC(0);
 
     public WindmillSubsystem() {
 
@@ -54,6 +54,7 @@ public class WindmillSubsystem extends SubsystemBase{
         config.ClosedLoopGeneral.ContinuousWrap = true;
         
         encoderConfig.MagnetSensor.MagnetOffset = Calibrations.WindmillCalibrations.kWindmillEncoderOffset;
+        encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.0;
     
         /* Configure gear ratio */
         FeedbackConfigs fdb = config.Feedback;
@@ -64,10 +65,10 @@ public class WindmillSubsystem extends SubsystemBase{
 
         /* Configure Motion Magic */
         MotionMagicConfigs mm = config.MotionMagic;
-        mm.withMotionMagicCruiseVelocity(RotationsPerSecond.of(0.25)) // 5 (mechanism) rotations per second cruise
-          .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(10)) // Take approximately 0.5 seconds to reach max vel
+        mm.withMotionMagicCruiseVelocity(RotationsPerSecond.of(Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic)) // 5 (mechanism) rotations per second cruise
+          .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic)) // Take approximately 0.5 seconds to reach max vel
           // Take approximately 0.1 seconds to reach max accel 
-          .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(100));
+          .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(Calibrations.WindmillCalibrations.kMaxJerkMotionMagic));
     
         Slot0Configs slot0 = config.Slot0;
         slot0.kG = Calibrations.WindmillCalibrations.kWindmillkG;
@@ -80,7 +81,8 @@ public class WindmillSubsystem extends SubsystemBase{
         slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
+        config.CurrentLimits.StatorCurrentLimit = Calibrations.WindmillCalibrations.kMaxWindmillStatorCurrentPerMotor;
+        // config.CurrentLimits.SupplyCurrentLimit = 60;
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
@@ -93,6 +95,8 @@ public class WindmillSubsystem extends SubsystemBase{
 
    @Override
     public void periodic(){
+
+        SmartDashboard.putNumber("Windmill", m_windmotor.getSupplyCurrent().getValueAsDouble());
 
         SmartDashboard.putNumber("Windmill Position", getPosition());
         SmartDashboard.putNumber("Windmill Encoder Position", getEncoderPosition());

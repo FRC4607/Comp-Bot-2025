@@ -15,29 +15,32 @@ public class Calibrations {
         public static final double kElevatorkD = 0.0;
 
         // Motion Magic Configs for the MotionMagicConfigs class for the Elevator
-        public static final double kMaxSpeedMotionMagic = 60.0;
+        public static final double kMaxSpeedMotionMagic = 40;
 
-        public static final double kMaxAccelerationMotionMagic = 300.0;
+        public static final double kMaxAccelerationMotionMagic = 10;
         public static final double kMaxElevatorCurrentPerMotor = 40;
+
 
     }
     public static class WindmillCalibrations {
         
         // The encoder offset for the windmill
-        public static final double kWindmillEncoderOffset = -0.439453125;
+        public static final double kWindmillEncoderOffset = 0.0615234375;
 
         // All of the PID and Feedforward gains for the MotionMagic Motion profiler.
-        public static final double kWindmillkG = 0.435;
-        public static final double kWindmillkS = 0.21;
+        public static final double kWindmillkG = 12.25; // 11.0 for TorqueCurrent
+        public static final double kWindmillkS = 1.5; // 3.0 for TorqueCurrent
         public static final double kWindmillkV = 0;
         public static final double kWindmillkA = 0;
-        public static final double kWindmillkP = 20;
-        public static final double kWindmillkD = 0;
+        public static final double kWindmillkP = 700;
+        public static final double kWindmillkD = 120;
 
         // Motion Magic Configs for the MotionMagicConfigs Class for the Windmill
-        public static final double kMaxSpeedMotionMagic = 0.25;
-        public static final double kMaxAccelerationMotionMagic = 0.75;
-        public static final double kMaxWindmillCurrentPerMotor = 40;
+        public static final double kMaxSpeedMotionMagic = 12;
+        public static final double kMaxAccelerationMotionMagic = 2;
+        public static final double kMaxJerkMotionMagic = 100;
+
+        public static final double kMaxWindmillStatorCurrentPerMotor = 80;
 
         // The windmill will report that it is at it's setpoint if it is within this amount of degrees.
         public static final double kWindmillTolerance = 5;
