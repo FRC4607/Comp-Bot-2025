@@ -11,13 +11,13 @@ public class Calibrations {
         public static final double kElevatorkS = 0.02; // 0.145?
         public static final double kElevatorkV = 0.0;
         public static final double kElevatorkA = 0.0;
-        public static final double kElevatorkP = 0.3;
+        public static final double kElevatorkP = 1.5;
         public static final double kElevatorkD = 0.0;
 
         // Motion Magic Configs for the MotionMagicConfigs class for the Elevator
-        public static final double kMaxSpeedMotionMagic = 40;
+        public static final double kMaxSpeedMotionMagic = 100;
 
-        public static final double kMaxAccelerationMotionMagic = 10;
+        public static final double kMaxAccelerationMotionMagic = 400;
         public static final double kMaxElevatorCurrentPerMotor = 40;
 
 
