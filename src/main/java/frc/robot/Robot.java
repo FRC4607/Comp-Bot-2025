@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Retract;
+import frc.robot.commands.SetElevatorSetpoint;
+import frc.robot.commands.SetWindmillSetpoint;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
 
 /**
@@ -20,6 +23,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private WindmillSubsystem m_windmill;
+  private ElevatorSubsystem m_elevator;
 
   private final RobotContainer m_robotContainer;
 
@@ -28,6 +32,10 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
   public Robot() {
+
+    m_windmill = new WindmillSubsystem();
+    m_elevator = new ElevatorSubsystem();
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -71,6 +79,8 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    new SetWindmillSetpoint(m_windmill.getPosition(), 2, m_windmill);
+    new SetElevatorSetpoint(m_elevator.getPosition(), 2, m_elevator);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -89,6 +99,9 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    new SetWindmillSetpoint(m_windmill.getPosition(), 2, m_windmill);
+    new SetElevatorSetpoint(m_elevator.getPosition(), 2, m_elevator);
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
