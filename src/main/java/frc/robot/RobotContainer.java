@@ -84,20 +84,19 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         // joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        // joystick.a().and(joystick.leftBumper()).onTrue(new CGHumanPickup(225, m_windmill, m_elevator));
-        // joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(30, 45, m_windmill, m_elevator));
-        // joystick.povLeft().and(joystick.leftBumper()).onTrue(new CGPlace(20, 45, m_windmill, m_elevator));
-        // joystick.povRight().and(joystick.leftBumper()).onTrue(new CGPlace(10, 45, m_windmill, m_elevator));
-        // joystick.povDown().and(joystick.leftBumper()).onTrue(new CGPlace(10, 45, m_windmill, m_elevator));
+        joystick.a().and(joystick.leftBumper()).onTrue(new CGHumanPickup(300, 36.72, m_windmill, m_elevator));
+        joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(30, 45, m_windmill, m_elevator));
+        joystick.povLeft().and(joystick.leftBumper()).onTrue(new CGPlace(20, 45, m_windmill, m_elevator));
+        joystick.povRight().and(joystick.leftBumper()).onTrue(new CGPlace(10, 45, m_windmill, m_elevator));
+        joystick.povDown().and(joystick.leftBumper()).onTrue(new CGPlace(10, 45, m_windmill, m_elevator));
 
-        // joystick.a().and(joystick.rightBumper()).onTrue(new CGHumanPickup(-45, m_windmill, m_elevator));
-        // joystick.povUp().and(joystick.rightBumper()).onTrue(new CGPlace(30, 135, m_windmill, m_elevator));
-        // joystick.povLeft().and(joystick.rightBumper()).onTrue(new CGPlace(20, 135, m_windmill, m_elevator));
-        // joystick.povRight().and(joystick.rightBumper()).onTrue(new CGPlace(10, 135, m_windmill, m_elevator));
-        // joystick.povDown().and(joystick.rightBumper()).onTrue(new CGPlace(10, 135, m_windmill, m_elevator));
+        joystick.a().and(joystick.rightBumper()).onTrue(new CGHumanPickup(-60, 36.72, m_windmill, m_elevator));
+        joystick.povUp().and(joystick.rightBumper()).onTrue(new CGPlace(30, 135, m_windmill, m_elevator));
+        joystick.povLeft().and(joystick.rightBumper()).onTrue(new CGPlace(20, 135, m_windmill, m_elevator));
+        joystick.povRight().and(joystick.rightBumper()).onTrue(new CGPlace(10, 135, m_windmill, m_elevator));
+        joystick.povDown().and(joystick.rightBumper()).onTrue(new CGPlace(10, 135, m_windmill, m_elevator));
 
-        joystick.povUp().onTrue(new SetElevatorSetpoint(20, 5, m_elevator));
-        joystick.povDown().onTrue(new SetElevatorSetpoint(3, 5, m_elevator));
+        joystick.b().onTrue(new Retract(m_windmill, m_elevator));
 
         m_manipulator.setDefaultCommand(new SetManipulatorSpeed(() -> joystick.getLeftTriggerAxis() - joystick.getRightTriggerAxis(), m_manipulator));
     

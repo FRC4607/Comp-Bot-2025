@@ -13,10 +13,10 @@ import frc.robot.subsystems.WindmillSubsystem;
 public class CGHumanPickup extends SequentialCommandGroup {
 
   /** Creates a new HumanPickupLeft. */
-  public CGHumanPickup(double windmillSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator) {
+  public CGHumanPickup(double windmillSetpoint, double elevatorSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     super(
       new Retract(windmill, elevator),
-      new SetElevatorSetpoint(24, 10, elevator),
+      new SetElevatorSetpoint(elevatorSetpoint, 10, elevator),
       new SetWindmillSetpoint(windmillSetpoint, 5, windmill)
     );
   }
