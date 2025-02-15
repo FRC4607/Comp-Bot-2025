@@ -91,16 +91,20 @@ public class RobotContainer {
         joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         joystick.a().and(joystick.leftBumper()).onTrue(new CGHumanPickup(240, 36.72, m_windmill, m_elevator));
-        joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(52, 45, m_windmill, m_elevator));
+        joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(52, 35, m_windmill, m_elevator));
         joystick.povLeft().and(joystick.leftBumper()).onTrue(new CGPlace(24, 45, m_windmill, m_elevator));
-        joystick.povRight().and(joystick.leftBumper()).onTrue(new CGPlace(10, 45, m_windmill, m_elevator));
+        joystick.povRight().and(joystick.leftBumper()).onTrue(new CGPlace(9.5, 45, m_windmill, m_elevator));
         joystick.povDown().and(joystick.leftBumper()).onTrue(new CGPlace(0, 45, m_windmill, m_elevator));
 
         joystick.a().and(joystick.rightBumper()).onTrue(new CGHumanPickup(-60, 36.72, m_windmill, m_elevator));
-        joystick.povUp().and(joystick.rightBumper()).onTrue(new CGPlace(52, 135, m_windmill, m_elevator));
+        joystick.povUp().and(joystick.rightBumper()).onTrue(new CGPlace(52, 145, m_windmill, m_elevator));
         joystick.povLeft().and(joystick.rightBumper()).onTrue(new CGPlace(24, 135, m_windmill, m_elevator));
-        joystick.povRight().and(joystick.rightBumper()).onTrue(new CGPlace(10, 135, m_windmill, m_elevator));
+        joystick.povRight().and(joystick.rightBumper()).onTrue(new CGPlace(9.5, 135, m_windmill, m_elevator));
         joystick.povDown().and(joystick.rightBumper()).onTrue(new CGPlace(0, 135, m_windmill, m_elevator));
+
+        // if (joystick.leftBumper().getAsBoolean() == false && joystick.rightBumper().getAsBoolean() == false) {
+        //     joystick.povLeft().onTrue(new CGPlace(22, 0, m_windmill, m_elevator));
+        // }
 
         joystick.b().onTrue(new Retract(m_windmill, m_elevator));
 

@@ -195,8 +195,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       m_elevator1.setPosition(0);
     }
     m_pastCaNdi = m_CaNdi.getS1Closed().getValue().booleanValue();
-    SmartDashboard.putBoolean("Candy Bar", m_CaNdi.getS1Closed().getValue().booleanValue());
-    SmartDashboard.putNumber("Elevator Position", getPosition());
+    // SmartDashboard.putBoolean("Candy Bar", m_CaNdi.getS1Closed().getValue().booleanValue());
+    // SmartDashboard.putNumber("Elevator Position", getPosition());
   }
 
   @Override

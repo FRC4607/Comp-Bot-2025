@@ -96,12 +96,12 @@ public class WindmillSubsystem extends SubsystemBase{
    @Override
     public void periodic(){
 
-        SmartDashboard.putNumber("Windmill", m_windmotor.getSupplyCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("Windmill", m_windmotor.getSupplyCurrent().getValueAsDouble());
 
-        SmartDashboard.putNumber("Windmill Position", getPosition());
-        SmartDashboard.putNumber("Windmill Encoder Position", getEncoderPosition());
-        SmartDashboard.putNumber("Windmill Setpoint", getWindmillSetpoint());
-        SmartDashboard.putNumber("Raw Windmill Encoder Postion", getRawEncoderPosition());
+        // SmartDashboard.putNumber("Windmill Position", getPosition());
+        // SmartDashboard.putNumber("Windmill Encoder Position", getEncoderPosition());
+        // SmartDashboard.putNumber("Windmill Setpoint", getWindmillSetpoint());
+        // SmartDashboard.putNumber("Raw Windmill Encoder Postion", getRawEncoderPosition());
         
     }
 
@@ -114,7 +114,6 @@ public class WindmillSubsystem extends SubsystemBase{
 
         //Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
         m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint / 360));
-        System.out.println("Setpoint Changed");
     }
 
     public void setWindmillSpeed(double newSpeed) {
