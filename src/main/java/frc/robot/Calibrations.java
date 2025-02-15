@@ -45,6 +45,11 @@ public class Calibrations {
         // The windmill will report that it is at it's setpoint if it is within this amount of degrees.
         public static final double kWindmillTolerance = 5;
     }
+    public static class DriverCalibrations {
+
+        // Scaling factor for reducing speed when elevator is extended, value is inversely proportional to the extended speed
+        public static final double kExtendedVelocityScalingFactor = 5;
+    }
     public static class PlacementCalibrations {
 
         // Tolerances for the Place Command group

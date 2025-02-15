@@ -69,9 +69,15 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX((-joystick.getLeftY() * MaxSpeed) / Math.abs((((m_elevator.getRangeRelativePosition() * m_elevator.getRangeRelativePosition()) * 7)) + 1)) // Drive forward with negative Y (forward)
-                    .withVelocityY((-joystick.getLeftX() * MaxSpeed) / Math.abs(((m_elevator.getRangeRelativePosition() * m_elevator.getRangeRelativePosition()) * 7)) + 1) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * Math.abs(((m_elevator.getRangeRelativePosition() * m_elevator.getRangeRelativePosition()) * 7)) + 1) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX((-joystick.getLeftY() * MaxSpeed) / 
+                    Math.abs((((m_elevator.getRangeRelativePosition()) * Calibrations.DriverCalibrations.kExtendedVelocityScalingFactor)) + 1 /* DO NOT TOUCH THIS NUMBER */)) 
+                    .withDeadband(0.1 / Math.abs(((m_elevator.getRangeRelativePosition()) * Calibrations.DriverCalibrations.kExtendedVelocityScalingFactor) + 1 /* DO NOT TOUCH THIS NUMBER */)) // Drive forward with negative Y (forward)
+
+                    .withVelocityY((-joystick.getLeftX() * MaxSpeed) / 
+                    Math.abs((((m_elevator.getRangeRelativePosition()) * Calibrations.DriverCalibrations.kExtendedVelocityScalingFactor)) + 1 /* DO NOT TOUCH THIS NUMBER */))
+                    .withDeadband(0.1 / Math.abs(((m_elevator.getRangeRelativePosition()) * Calibrations.DriverCalibrations.kExtendedVelocityScalingFactor) + 1 /* DO NOT TOUCH THIS NUMBER */)) // Drive left with negative X (left)
+
+                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
