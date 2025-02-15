@@ -140,10 +140,10 @@ public class WindmillSubsystem extends SubsystemBase{
     }
 
     public void applyConfigs() {
-        m_config.Slot0.kG = SmartDashboard.getNumber("windmill kG", Calibrations.WindmillCalibrations.kWindmillkG);
-        m_config.Slot0.kS = SmartDashboard.getNumber("windmill kS", Calibrations.WindmillCalibrations.kWindmillkS);
-        m_config.Slot0.kP = SmartDashboard.getNumber("windmill kP", Calibrations.WindmillCalibrations.kWindmillkP);
-        m_config.Slot0.kD = SmartDashboard.getNumber("windmill kD", Calibrations.WindmillCalibrations.kWindmillkD);
+        // m_config.Slot0.kG = SmartDashboard.getNumber("windmill kG", Calibrations.WindmillCalibrations.kWindmillkG);
+        // m_config.Slot0.kS = SmartDashboard.getNumber("windmill kS", Calibrations.WindmillCalibrations.kWindmillkS);
+        // m_config.Slot0.kP = SmartDashboard.getNumber("windmill kP", Calibrations.WindmillCalibrations.kWindmillkP);
+        // m_config.Slot0.kD = SmartDashboard.getNumber("windmill kD", Calibrations.WindmillCalibrations.kWindmillkD);
 
         m_windmotor.getConfigurator().apply(m_config);
     }

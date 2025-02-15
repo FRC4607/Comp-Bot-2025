@@ -110,11 +110,11 @@ public class RobotContainer {
 
         m_manipulator.setDefaultCommand(new SetManipulatorSpeed(() -> joystick.getLeftTriggerAxis() - joystick.getRightTriggerAxis(), m_manipulator));
     
-                SmartDashboard.putData("Apply Config", new ApplyConfigs(m_windmill, m_elevator));
+                // SmartDashboard.putData("Apply Config", new ApplyConfigs(m_windmill, m_elevator));
         
                 drivetrain.registerTelemetry(logger::telemeterize);
         
-        SmartDashboard.putData("Disable Logger", new InstantCommand(() -> { SignalLogger.stop(); System.out.println("Logs Stopped");}));
+        // SmartDashboard.putData("Disable Logger", new InstantCommand(() -> { SignalLogger.stop(); System.out.println("Logs Stopped");}));
         
         
             }
