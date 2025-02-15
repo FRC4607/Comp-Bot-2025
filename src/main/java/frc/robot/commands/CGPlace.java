@@ -16,7 +16,7 @@ import frc.robot.subsystems.WindmillSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class CGPlace extends SequentialCommandGroup {
 
-  /** Creates a new PlaceL2. */
+  /** Creates a new Placement Command group. */
   public CGPlace(double elevatorHeight, double windmillSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     super(
       new ConditionalCommand(

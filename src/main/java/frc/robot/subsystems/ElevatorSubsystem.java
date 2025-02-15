@@ -215,9 +215,22 @@ public void editConfig() {
 
 }
 
+/**
+ * Gets the position of the elevator in Inches.
+ * 
+ * @return the position of the elevator.
+ */
 public double getPosition() {
   return m_elevator1.getPosition().getValueAsDouble() / Constants.ElevatorConstants.kPulleyGearRatio;
 }
 
+/**
+ * Gets the position of the elevator from a range of 0 to 1, with 0 being stowed and 1 being fully extended.
+ * 
+ * @return position of the elevator.
+ */
+public double getRangeRelativePosition() {
+  return m_elevator1.getPosition().getValueAsDouble() / 52;
+}
 
 }
