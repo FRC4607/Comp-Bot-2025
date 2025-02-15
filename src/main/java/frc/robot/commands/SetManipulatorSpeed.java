@@ -34,7 +34,7 @@ public class SetManipulatorSpeed extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_manipulator.setVelocity(0.5 * Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble(), m_newVelocity.getAsDouble()));
+    m_manipulator.setVelocity(0.25 * Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble(), m_newVelocity.getAsDouble()));
   }
 
   // Called once the command ends or is interrupted.
