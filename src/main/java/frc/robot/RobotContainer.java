@@ -27,6 +27,7 @@ import frc.robot.commands.ApplyConfigs;
 import frc.robot.commands.CGHumanPickup;
 import frc.robot.commands.CGPlace;
 import frc.robot.commands.Retract;
+import frc.robot.commands.RetractDown;
 import frc.robot.commands.SetElevatorSetpoint;
 import frc.robot.commands.SetManipulatorSpeed;
 import frc.robot.commands.SetWindmillSetpoint;
@@ -98,14 +99,14 @@ public class RobotContainer {
 
         // Setpoints for when the robot is on the left side of the reef.
         joystick.a().and(joystick.leftBumper()).onTrue(new CGHumanPickup(240, 36.72, m_windmill, m_elevator));
-        joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(52, 35, m_windmill, m_elevator));
+        joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(52.5, 35, m_windmill, m_elevator));
         joystick.povLeft().and(joystick.leftBumper()).onTrue(new CGPlace(24, 45, m_windmill, m_elevator));
         joystick.povRight().and(joystick.leftBumper()).onTrue(new CGPlace(9.5, 45, m_windmill, m_elevator));
         joystick.povDown().and(joystick.leftBumper()).onTrue(new CGPlace(0, 45, m_windmill, m_elevator));
 
         // Setpoints for when the robot is on the right side of the reef.
         joystick.a().and(joystick.rightBumper()).onTrue(new CGHumanPickup(-60, 36.72, m_windmill, m_elevator));
-        joystick.povUp().and(joystick.rightBumper()).onTrue(new CGPlace(52, 145, m_windmill, m_elevator));
+        joystick.povUp().and(joystick.rightBumper()).onTrue(new CGPlace(52.5, 145, m_windmill, m_elevator));
         joystick.povLeft().and(joystick.rightBumper()).onTrue(new CGPlace(24, 135, m_windmill, m_elevator));
         joystick.povRight().and(joystick.rightBumper()).onTrue(new CGPlace(9.5, 135, m_windmill, m_elevator));
         joystick.povDown().and(joystick.rightBumper()).onTrue(new CGPlace(0, 135, m_windmill, m_elevator));
@@ -115,8 +116,9 @@ public class RobotContainer {
         // }
 
         joystick.b().onTrue(new Retract(m_windmill, m_elevator));
+        joystick.x().onTrue(new RetractDown(m_windmill, m_elevator));
 
-        m_manipulator.setDefaultCommand(new SetManipulatorSpeed(() -> joystick.getLeftTriggerAxis() - joystick.getRightTriggerAxis(), m_manipulator));
+        m_manipulator.setDefaultCommand(new SetManipulatorSpeed(() -> joystick.getLeftTriggerAxis() - joystick.getRightTriggerAxis(), m_manipulator, m_windmill));
     
                 // SmartDashboard.putData("Apply Config", new ApplyConfigs(m_windmill, m_elevator));
         

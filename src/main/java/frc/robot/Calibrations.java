@@ -49,6 +49,8 @@ public class Calibrations {
 
         // Scaling factor for reducing speed when elevator is extended, value is inversely proportional to the extended speed
         public static final double kExtendedVelocityScalingFactor = 5;
+
+        public static double kRetractWindmillTolerance = 25;
     }
     public static class PlacementCalibrations {
 

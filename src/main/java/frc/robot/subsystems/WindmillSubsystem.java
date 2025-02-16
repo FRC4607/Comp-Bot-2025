@@ -110,8 +110,16 @@ public class WindmillSubsystem extends SubsystemBase{
      * 
      * @param newWindmillSetpoint The new setpoint in degrees.
      */
-    public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing) {
-
+    public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing, ElevatorSubsystem elevator) {
+        if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && newWindmillSetpoint >= 90 && newWindmillSetpoint < 270) {
+            m_windmotor.setControl(m_request.withPosition(210 / 360));
+            System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+        } else if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && (newWindmillSetpoint >= 270 || newWindmillSetpoint < 90)) {
+            m_windmotor.setControl(m_request.withPosition(330 / 360));
+            System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+        } else {
+            m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint));
+        }
         //Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
         m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint / 360));
     }
@@ -146,6 +154,14 @@ public class WindmillSubsystem extends SubsystemBase{
         // m_config.Slot0.kD = SmartDashboard.getNumber("windmill kD", Calibrations.WindmillCalibrations.kWindmillkD);
 
         m_windmotor.getConfigurator().apply(m_config);
+    }
+
+    public boolean isLeft() {
+        if (getPosition() >= 90 && getPosition() < 270) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

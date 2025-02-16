@@ -168,12 +168,26 @@ public class ElevatorSubsystem extends SubsystemBase {
    * 
    * @param newElevatorSetpoint - New setpoint for the elevator in inches.
    */
-  public void setElevatorSetpoint(double newElevatorSetpoint) {
+  public void setElevatorSetpoint(double newElevatorSetpoint, WindmillSubsystem windmill) {
 
     //Sets the setpoint of elevator1 motor using the MotionMagic Motion Profiler.
     //m_elevator1.setControl(m_motionMagicTorqueCurrentFOC.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio));
-    m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio));
-
+    if (
+      ((
+        windmill.getWindmillSetpoint() < 320 
+        && windmill.getWindmillSetpoint() > 210 
+      )
+      || (
+        windmill.getPosition() < 320 
+      && windmill.getPosition() > 210
+      )) 
+      && newElevatorSetpoint < 25
+      ) {
+      System.out.println("Invalid Elevator Setpoint, automatically set to the safe value of 25 inches");
+      m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio));
+    } else {
+      m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio));
+    }
   }
 
   /**
@@ -231,6 +245,10 @@ public double getPosition() {
  */
 public double getRangeRelativePosition() {
   return m_elevator1.getPosition().getValueAsDouble() / 52;
+}
+
+public double getSetpoint() {
+  return m_request.Position / Constants.ElevatorConstants.kPulleyGearRatio;
 }
 
 }

@@ -20,14 +20,16 @@ public class CGPlace extends SequentialCommandGroup {
   public CGPlace(double elevatorHeight, double windmillSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     super(
       new ConditionalCommand(
-        new InstantCommand(), 
+        new SetWindmillSetpoint(90, 5, elevator, windmill),
         new ConditionalCommand(
-          new InstantCommand(), 
-          new Retract(windmill, elevator), 
-          () -> windmill.getWindmillSetpoint() < 170 && windmill.getWindmillSetpoint() > 10 && windmill.isAtPosition()), 
-        () -> Math.abs(windmillSetpoint - windmill.getWindmillSetpoint()) < 45),
-      new SetElevatorSetpoint(elevatorHeight, Calibrations.PlacementCalibrations.kElevatorTolerance, elevator),
-      new SetWindmillSetpoint(windmillSetpoint, Calibrations.PlacementCalibrations.kWindmillTolerance, windmill)
+          new InstantCommand(),
+          new Retract(windmill, elevator),
+          () -> (windmillSetpoint < 170 && windmillSetpoint > 10)
+        ),
+        () -> elevator.getPosition() > elevatorHeight
+      ), 
+      new SetElevatorSetpoint(elevatorHeight, Calibrations.PlacementCalibrations.kElevatorTolerance, elevator, windmill),
+      new SetWindmillSetpoint(windmillSetpoint, Calibrations.PlacementCalibrations.kWindmillTolerance, elevator, windmill)
     );
 
   }
