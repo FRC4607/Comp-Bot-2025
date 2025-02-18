@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,6 +28,8 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
+  private final boolean kUseLimelight = false;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -46,15 +49,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    SmartDashboard.putNumber("windmill kS", Calibrations.WindmillCalibrations.kWindmillkS);
-    SmartDashboard.putNumber("windmill kG", Calibrations.WindmillCalibrations.kWindmillkG);
-    SmartDashboard.putNumber("windmill kP", Calibrations.WindmillCalibrations.kWindmillkP);
-    SmartDashboard.putNumber("windmill kD", Calibrations.WindmillCalibrations.kWindmillkD);
 
-    SmartDashboard.putNumber("elevator kS", Calibrations.ElevatorCalibrations.kElevatorkS);
-    SmartDashboard.putNumber("elevator kG", Calibrations.ElevatorCalibrations.kElevatorkG);
-    SmartDashboard.putNumber("elevator kP", Calibrations.ElevatorCalibrations.kElevatorkP);
-    SmartDashboard.putNumber("elevator kD", Calibrations.ElevatorCalibrations.kElevatorkD);
   }
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -67,6 +62,26 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     
     CommandScheduler.getInstance().run();
+
+    /*
+     * This example of adding Limelight is very simple and may not be sufficient for on-field use.
+     * Users typically need to provide a standard deviation that scales with the distance to target
+     * and changes with number of tags available.
+     *
+     * This example is sufficient to show that vision integration is possible, though exact implementation
+     * of how to use vision should be tuned per-robot and to the team's specification.
+     */
+    if (kUseLimelight) {
+      var driveState = m_robotContainer.drivetrain.getState();
+      double headingDeg = driveState.Pose.getRotation().getDegrees();
+      double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
+
+      LimelightHelpers.SetRobotOrientation("limelight", headingDeg, 0, 0, 0, 0, 0);
+      var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+      if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
+        m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose, llMeasurement.timestampSeconds);
+      }
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -80,8 +95,8 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    new SetWindmillSetpoint(m_windmill.getPosition(), 2, m_elevator, m_windmill);
-    new SetElevatorSetpoint(m_elevator.getPosition(), 2, m_elevator, m_windmill);
+    // new SetWindmillSetpoint(m_windmill.getPosition(), 2, m_elevator, m_windmill);
+    // new SetElevatorSetpoint(m_elevator.getPosition(), 2, m_elevator, m_windmill);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)

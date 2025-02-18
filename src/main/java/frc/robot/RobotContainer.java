@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -16,6 +17,7 @@ import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -49,17 +51,24 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
-    private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
-    private final WindmillSubsystem m_windmill = new WindmillSubsystem();
-    private final ManipulatorSubsystem m_manipulator = new ManipulatorSubsystem();
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+    public final WindmillSubsystem m_windmill = new WindmillSubsystem();
+    public final ManipulatorSubsystem m_manipulator = new ManipulatorSubsystem();
+
+    private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
+        autoChooser = AutoBuilder.buildAutoChooser("Center One Piece Auto");
+        SmartDashboard.putData("Auto Mode", autoChooser);
+
         configureBindings();
     }
 
@@ -129,7 +138,7 @@ public class RobotContainer {
         
             }
         
-            public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+    public Command getAutonomousCommand() {
+        return autoChooser.getSelected();
     }
 }
