@@ -45,6 +45,20 @@ public class Calibrations {
         // The windmill will report that it is at it's setpoint if it is within this amount of degrees.
         public static final double kWindmillTolerance = 5;
     }
+    public static class ManipulatorCalibrations {
+        
+        public static final double kManipulatorKS = 37;
+        public static final double kManipulatorKV = 0;
+        public static final double kManipulatorKA = 0;
+        public static final double kManipulatorKP = 10;
+        public static final double kManipulatorKD = 0;
+
+        public static final double kManipulatormaxAcceleration = 80;
+
+        public static final double kManipulatorMaxSpeed = 10;
+
+        public static final double kManipulatorMaxStatorCurrent = 100;
+    }
     public static class DriverCalibrations {
 
         // Scaling factor for reducing speed when elevator is extended, value is inversely proportional to the extended speed

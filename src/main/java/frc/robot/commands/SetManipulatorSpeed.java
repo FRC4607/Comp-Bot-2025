@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import frc.robot.Calibrations;
 import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
 
@@ -39,9 +40,9 @@ public class SetManipulatorSpeed extends Command {
   @Override
   public void execute() {
     if (m_windmill.isLeft() == true) {
-      m_manipulator.setVelocity(0.5 * Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble(), m_newVelocity.getAsDouble()));
+      m_manipulator.setVelocity(Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble() * Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed, m_newVelocity.getAsDouble()));
     } else {
-      m_manipulator.setVelocity(-0.5 * Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble(), m_newVelocity.getAsDouble()));
+      m_manipulator.setVelocity(Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble() * Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed, m_newVelocity.getAsDouble()));
     }
   }
 
