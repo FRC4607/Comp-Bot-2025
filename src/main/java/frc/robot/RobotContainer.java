@@ -60,9 +60,8 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
-    public final WindmillSubsystem m_windmill = new WindmillSubsystem();
-    public final ManipulatorSubsystem m_manipulator = new ManipulatorSubsystem();
 
+    /* Path follower */
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
@@ -75,26 +74,26 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX((-joystick.getLeftY() * MaxSpeed) / 
-                    Math.abs((((m_elevator.getRangeRelativePosition()) * Calibrations.DriverCalibrations.kExtendedVelocityScalingFactor)) + 1 /* DO NOT TOUCH THIS NUMBER */)) 
-                    .withDeadband(0.1 / Math.abs(((m_elevator.getRangeRelativePosition()) * Calibrations.DriverCalibrations.kExtendedVelocityScalingFactor) + 1 /* DO NOT TOUCH THIS NUMBER */)) // Drive forward with negative Y (forward)
-
-                    .withVelocityY((-joystick.getLeftX() * MaxSpeed) / 
-                    Math.abs((((m_elevator.getRangeRelativePosition()) * Calibrations.DriverCalibrations.kExtendedVelocityScalingFactor)) + 1 /* DO NOT TOUCH THIS NUMBER */))
-                    .withDeadband(0.1 / Math.abs(((m_elevator.getRangeRelativePosition()) * Calibrations.DriverCalibrations.kExtendedVelocityScalingFactor) + 1 /* DO NOT TOUCH THIS NUMBER */)) // Drive left with negative X (left)
-
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
-        // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
-        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        // ));
+        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        joystick.b().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        ));
+
+        joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
+            forwardStraight.withVelocityX(0.5).withVelocityY(0))
+        );
+        joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
+            forwardStraight.withVelocityX(-0.5).withVelocityY(0))
+        );
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -104,41 +103,13 @@ public class RobotContainer {
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        // Setpoints for when the robot is on the left side of the reef.
-        joystick.a().and(joystick.leftBumper()).onTrue(new CGHumanPickup(240, 36.72, m_windmill, m_elevator));
-        joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(52.5, 35, m_windmill, m_elevator));
-        joystick.povLeft().and(joystick.leftBumper()).onTrue(new CGPlace(24, 45, m_windmill, m_elevator));
-        joystick.povRight().and(joystick.leftBumper()).onTrue(new CGPlace(9.5, 45, m_windmill, m_elevator));
-        joystick.povDown().and(joystick.leftBumper()).onTrue(new CGPlace(0, 45, m_windmill, m_elevator));
+        drivetrain.registerTelemetry(logger::telemeterize);
+    }
 
-        // Setpoints for when the robot is on the right side of the reef.
-        joystick.a().and(joystick.rightBumper()).onTrue(new CGHumanPickup(-60, 36.72, m_windmill, m_elevator));
-        joystick.povUp().and(joystick.rightBumper()).onTrue(new CGPlace(52.5, 145, m_windmill, m_elevator));
-        joystick.povLeft().and(joystick.rightBumper()).onTrue(new CGPlace(24, 135, m_windmill, m_elevator));
-        joystick.povRight().and(joystick.rightBumper()).onTrue(new CGPlace(9.5, 135, m_windmill, m_elevator));
-        joystick.povDown().and(joystick.rightBumper()).onTrue(new CGPlace(0, 135, m_windmill, m_elevator));
-
-        // if (joystick.leftBumper().getAsBoolean() == false && joystick.rightBumper().getAsBoolean() == false) {
-        //     joystick.povLeft().onTrue(new CGPlace(22, 0, m_windmill, m_elevator));
-        // }
-
-        joystick.b().onTrue(new Retract(m_windmill, m_elevator));
-        joystick.x().onTrue(new RetractDown(m_windmill, m_elevator));
-
-        m_manipulator.setDefaultCommand(new SetManipulatorSpeed(() -> joystick.getLeftTriggerAxis() - joystick.getRightTriggerAxis(), m_manipulator, m_windmill));
-    
-                // SmartDashboard.putData("Apply Config", new ApplyConfigs(m_windmill, m_elevator));
-        
-                drivetrain.registerTelemetry(logger::telemeterize);
-        
-        // SmartDashboard.putData("Disable Logger", new InstantCommand(() -> { SignalLogger.stop(); System.out.println("Logs Stopped");}));
-        
-        
-            }
-        
     public Command getAutonomousCommand() {
+        /* Run the path selected from the auto chooser */
         return autoChooser.getSelected();
     }
 }
