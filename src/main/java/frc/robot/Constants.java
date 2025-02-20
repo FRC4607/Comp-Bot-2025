@@ -31,7 +31,14 @@ public final class Constants {
 
   }
   public static class WindmillConstants{
+
     public static final int kWindmillCANID = 15;
     
+  }
+
+  public static class ManipulatorConstants {
+
+    public static final int kManipulatorCANID = 0;
+
   }
 }
