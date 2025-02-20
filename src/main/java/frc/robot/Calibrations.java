@@ -7,8 +7,8 @@ public class Calibrations {
     public static class ElevatorCalibrations {
 
         //All of the PID and Feedforward gains for the MotionMagic Motion profiler.
-        public static final double kElevatorkG = 0;
-        public static final double kElevatorkS = 0;
+        public static final double kElevatorkG = 5;
+        public static final double kElevatorkS = 3;
         public static final double kElevatorkA = 0;
         public static final double kElevatorkV = 0;
         public static final double kElevatorkP = 0;
@@ -25,19 +25,19 @@ public class Calibrations {
     public static class WindmillCalibrations {
         
         // The encoder offset for the windmill
-        public static final double kWindmillEncoderOffset = 0;
+        public static final double kWindmillEncoderOffset = 0.765869140625;
 
         // All of the PID and Feedforward gains for the MotionMagic Motion profiler.
-        public static final double kWindmillkG = 0;
-        public static final double kWindmillkS = 0;
+        public static final double kWindmillkG = 10.6;
+        public static final double kWindmillkS = 3.0;
         public static final double kWindmillkV = 0;
         public static final double kWindmillkA = 0;
-        public static final double kWindmillkP = 0;
-        public static final double kWindmillkD = 0;
+        public static final double kWindmillkP = 600;
+        public static final double kWindmillkD = 160;
 
         // Motion Magic Configs for the MotionMagicConfigs Class for the Windmill
         public static final double kMaxSpeedMotionMagic = 1;
-        public static final double kMaxAccelerationMotionMagic = 0.5;
+        public static final double kMaxAccelerationMotionMagic = 4;
         public static final double kMaxJerkMotionMagic = 100;
 
         public static final double kMaxWindmillStatorCurrentPerMotor = 80;

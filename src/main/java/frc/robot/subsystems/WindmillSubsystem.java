@@ -44,7 +44,7 @@ public class WindmillSubsystem extends SubsystemBase{
         // Initializes the motor on the windmill.
         m_windmotor = new TalonFX(Constants.WindmillConstants.kWindmillCANID, "kachow");
 
-        m_encoder = new CANcoder(3, "kachow");
+        m_encoder = new CANcoder(Constants.WindmillConstants.kWindmillEncoderCANID, "kachow");
         // Initializes the motion profiler.
 
         TalonFXConfiguration config = new TalonFXConfiguration();
@@ -59,7 +59,7 @@ public class WindmillSubsystem extends SubsystemBase{
         /* Configure gear ratio */
         FeedbackConfigs fdb = config.Feedback;
         fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        fdb.FeedbackRemoteSensorID = 3;
+        fdb.FeedbackRemoteSensorID = 6;
         fdb.SensorToMechanismRatio = 1; // 12.8 rotor rotations per mechanism rotation
         fdb.RotorToSensorRatio = 64.04;
 
@@ -72,11 +72,11 @@ public class WindmillSubsystem extends SubsystemBase{
     
         Slot0Configs slot0 = config.Slot0;
         slot0.kG = Calibrations.WindmillCalibrations.kWindmillkG;
-        slot0.kS = Calibrations.WindmillCalibrations.kWindmillkS; // Add 0.25 V output to overcome static friction
-        slot0.kV = Calibrations.WindmillCalibrations.kWindmillkV; // A velocity target of 1 rps results in 0.12 V output
-        slot0.kA = Calibrations.WindmillCalibrations.kWindmillkA; // An acceleration of 1 rps/s requires 0.01 V output
-        slot0.kP = Calibrations.WindmillCalibrations.kWindmillkP; // A position error of 0.2 rotations results in 12 V output
-        slot0.kD = Calibrations.WindmillCalibrations.kWindmillkD; // A velocity error of 1 rps results in 0.5 V output
+        slot0.kS = Calibrations.WindmillCalibrations.kWindmillkS;
+        slot0.kV = Calibrations.WindmillCalibrations.kWindmillkV;
+        slot0.kA = Calibrations.WindmillCalibrations.kWindmillkA;
+        slot0.kP = Calibrations.WindmillCalibrations.kWindmillkP;
+        slot0.kD = Calibrations.WindmillCalibrations.kWindmillkD;
 
         slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
@@ -111,15 +111,16 @@ public class WindmillSubsystem extends SubsystemBase{
      * @param newWindmillSetpoint The new setpoint in degrees.
      */
     public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing, ElevatorSubsystem elevator) {
-        if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && newWindmillSetpoint >= 90 && newWindmillSetpoint < 270) {
-            m_windmotor.setControl(m_request.withPosition(210 / 360));
-            System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
-        } else if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && (newWindmillSetpoint >= 270 || newWindmillSetpoint < 90)) {
-            m_windmotor.setControl(m_request.withPosition(330 / 360));
-            System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
-        } else {
+        // if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && newWindmillSetpoint >= 90 && newWindmillSetpoint < 270) {
+        //     m_windmotor.setControl(m_request.withPosition(210 / 360));
+        //     System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+        // } else if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && (newWindmillSetpoint >= 270 || newWindmillSetpoint < 90)) {
+        //     m_windmotor.setControl(m_request.withPosition(330 / 360));
+        //     System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+        // } else {
             m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint));
-        }
+            System.out.println("Windmill Setpoint Set to: " + newWindmillSetpoint);
+        // }
         //Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
         m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint / 360));
     }
