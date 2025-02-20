@@ -99,10 +99,8 @@ public class RobotContainer {
         // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        joystick.povUp().onTrue(new SetWindmillSetpoint(90, 0, m_elevator, m_windmill));
-        joystick.povRight().onTrue(new SetWindmillSetpoint(0, 0, m_elevator, m_windmill));
-        joystick.povLeft().onTrue(new SetWindmillSetpoint(180, 0, m_elevator, m_windmill));
-        joystick.povDown().onTrue(new SetWindmillSetpoint(270, 0, m_elevator, m_windmill));
+        joystick.povUp().onTrue(new SetElevatorSetpoint(20, 0, m_elevator, m_windmill));
+        joystick.povDown().onTrue(new SetWindmillSetpoint(3, 0, m_elevator, m_windmill));
 
         // reset the field-centric heading on left bumper press
         // joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));

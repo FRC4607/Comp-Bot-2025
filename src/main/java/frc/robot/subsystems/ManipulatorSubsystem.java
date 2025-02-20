@@ -57,6 +57,11 @@ public class ManipulatorSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  /**
+   * Sets the velocity of the Manipulator (rpms) using MotionMagic VelocityTorqueCurrentFOC
+   * 
+   * @param newManipulatorVelocity
+   */
   public void setVelocity (double newManipulatorVelocity) {
 
     m_motor.setControl(m_velocityRequest.withVelocity(newManipulatorVelocity));

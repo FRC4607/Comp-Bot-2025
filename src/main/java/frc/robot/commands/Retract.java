@@ -12,7 +12,7 @@ import frc.robot.subsystems.WindmillSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Retract extends SequentialCommandGroup {
 
-  /** Creates a new Retract Command Group. */
+  /** Creates a new Retract Command Group, which lolipops the arm and moves the elevator all the way down. */
   public Retract(WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     // Use addRequirements() here to declare subsystem dependencies.
     super(

@@ -31,6 +31,7 @@ import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
@@ -61,12 +62,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private TalonFXConfiguration m_config;
 
-  private final MotionMagicVoltage m_request;
-
-  // 
-
-  // Creates the class for the motion profiler.
-  private final MotionMagicTorqueCurrentFOC m_motionMagicTorqueCurrentFOC;
+  private final MotionMagicTorqueCurrentFOC m_request;
 
   public ElevatorSubsystem() {
 
@@ -77,17 +73,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevator4 = new TalonFX(Constants.ElevatorConstants.kElevator4CANID, "kachow");
 
     // initialize the CANdi
-    m_CaNdi = new CANdi(25, "kachow");
-    // TODO: move deviceid to Constants
-
-    // initializes the motion magic motion profiler.
-    m_motionMagicTorqueCurrentFOC = new MotionMagicTorqueCurrentFOC(0);
+    m_CaNdi = new CANdi(Constants.ElevatorConstants.kCandiCANID, "kachow");
 
     // Creates a CANdi Configurator
     CANdiConfiguration candiConfig = new CANdiConfiguration();
 
-
-    final MotionMagicVoltage request = new MotionMagicVoltage(0);
+    final MotionMagicTorqueCurrentFOC request = new MotionMagicTorqueCurrentFOC(0);
 
     m_request = request;
 
@@ -103,6 +94,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     SoftwareLimitSwitchConfigs softLimitConfigs = config.SoftwareLimitSwitch;
 
     HardwareLimitSwitchConfigs limitConfigs = config.HardwareLimitSwitch;
+
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     // Gravity type for this subsystem.
     slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
@@ -146,10 +139,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevator4.getConfigurator().apply(config);
 
     // Sets the neutral mode of all of the elevator motors to Brake Mode.
-    m_elevator1.setNeutralMode(NeutralModeValue.Brake);
-    m_elevator2.setNeutralMode(NeutralModeValue.Brake);
-    m_elevator3.setNeutralMode(NeutralModeValue.Brake);
-    m_elevator4.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator1.setNeutralMode(NeutralModeValue.Coast);
+    m_elevator2.setNeutralMode(NeutralModeValue.Coast);
+    m_elevator3.setNeutralMode(NeutralModeValue.Coast);
+    m_elevator4.setNeutralMode(NeutralModeValue.Coast);
 
     // Declares elevator1 as lead motor. Other motors are set to follow.
     m_follower = new Follower(Constants.ElevatorConstants.kElevator1CANID, false);
@@ -210,8 +203,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     m_pastCaNdi = m_CaNdi.getS1Closed().getValue().booleanValue();
     
-    // SmartDashboard.putBoolean("Candy Bar", m_CaNdi.getS1Closed().getValue().booleanValue());
-    // SmartDashboard.putNumber("Elevator Position", getPosition());
+    SmartDashboard.putBoolean("Candy Bar", m_CaNdi.getS1Closed().getValue().booleanValue());
+    SmartDashboard.putNumber("Elevator Position", getPosition());
   }
 
   @Override
@@ -219,7 +212,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
-public void editConfig() {
+  /**
+   * Applies configs of the elevator motors that may have been changed on the fly.
+   */
+  public void editConfig() {
   // m_config.Slot0.kS = SmartDashboard.getNumber("elevator kS", Calibrations.ElevatorCalibrations.kElevatorkS);
   // m_config.Slot0.kG = SmartDashboard.getNumber("elevator kG", Calibrations.ElevatorCalibrations.kElevatorkG);
   // m_config.Slot0.kP = SmartDashboard.getNumber("elevator kP", Calibrations.ElevatorCalibrations.kElevatorkP);
@@ -227,28 +223,33 @@ public void editConfig() {
 
   // m_elevator1.getConfigurator().apply(m_config);
 
-}
+  }
 
-/**
- * Gets the position of the elevator in Inches.
- * 
- * @return the position of the elevator.
- */
-public double getPosition() {
-  return m_elevator1.getPosition().getValueAsDouble() / Constants.ElevatorConstants.kPulleyGearRatio;
-}
+  /**
+   * Gets the position of the elevator in Inches.
+   * 
+   * @return the position of the elevator.
+   */
+  public double getPosition() {
+    return m_elevator1.getPosition().getValueAsDouble() / Constants.ElevatorConstants.kPulleyGearRatio;
+  }
 
-/**
- * Gets the position of the elevator from a range of 0 to 1, with 0 being stowed and 1 being fully extended.
- * 
- * @return position of the elevator.
- */
-public double getRangeRelativePosition() {
-  return m_elevator1.getPosition().getValueAsDouble() / 52;
-}
+  /**
+   * Gets the position of the elevator from a range of 0 to 1, with 0 being stowed and 1 being fully extended.
+   * 
+   * @return position of the elevator.
+   */
+  public double getRangeRelativePosition() {
+    return m_elevator1.getPosition().getValueAsDouble() / 52;
+  }
 
-public double getSetpoint() {
-  return m_request.Position / Constants.ElevatorConstants.kPulleyGearRatio;
-}
+  /**
+   * Gets the sepoint of the arm in inches.
+   * 
+   * @return The setpoint of the arm in inches.
+   */
+  public double getSetpoint() {
+    return m_request.Position / Constants.ElevatorConstants.kPulleyGearRatio;
+  }
 
 }

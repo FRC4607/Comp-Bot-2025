@@ -59,17 +59,18 @@ public class WindmillSubsystem extends SubsystemBase{
         /* Configure gear ratio */
         FeedbackConfigs fdb = config.Feedback;
         fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        fdb.FeedbackRemoteSensorID = 6;
-        fdb.SensorToMechanismRatio = 1; // 12.8 rotor rotations per mechanism rotation
+        fdb.FeedbackRemoteSensorID = Constants.WindmillConstants.kWindmillEncoderCANID;
+        fdb.SensorToMechanismRatio = 1;
         fdb.RotorToSensorRatio = 64.04;
 
-        /* Configure Motion Magic */
+        /* Configure Motion Magic velocity, Acceleration, and Jerk */
         MotionMagicConfigs mm = config.MotionMagic;
         mm.withMotionMagicCruiseVelocity(RotationsPerSecond.of(Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic)) // 5 (mechanism) rotations per second cruise
           .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic)) // Take approximately 0.5 seconds to reach max vel
           // Take approximately 0.1 seconds to reach max accel 
           .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(Calibrations.WindmillCalibrations.kMaxJerkMotionMagic));
     
+        // Slot 0 gains for MotionMagic
         Slot0Configs slot0 = config.Slot0;
         slot0.kG = Calibrations.WindmillCalibrations.kWindmillkG;
         slot0.kS = Calibrations.WindmillCalibrations.kWindmillkS;
@@ -111,17 +112,18 @@ public class WindmillSubsystem extends SubsystemBase{
      * @param newWindmillSetpoint The new setpoint in degrees.
      */
     public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing, ElevatorSubsystem elevator) {
-        // if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && newWindmillSetpoint >= 90 && newWindmillSetpoint < 270) {
-        //     m_windmotor.setControl(m_request.withPosition(210 / 360));
-        //     System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
-        // } else if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && (newWindmillSetpoint >= 270 || newWindmillSetpoint < 90)) {
-        //     m_windmotor.setControl(m_request.withPosition(330 / 360));
-        //     System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
-        // } else {
+        if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && newWindmillSetpoint >= 90 && newWindmillSetpoint < 270) {
+            m_windmotor.setControl(m_request.withPosition(210 / 360));
+            System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+        } else if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && (newWindmillSetpoint >= 270 || newWindmillSetpoint < 90)) {
+            m_windmotor.setControl(m_request.withPosition(330 / 360));
+            System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+        } else {
             m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint));
             System.out.println("Windmill Setpoint Set to: " + newWindmillSetpoint);
-        // }
-        //Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
+        }
+
+        // Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
         m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint / 360));
     }
 

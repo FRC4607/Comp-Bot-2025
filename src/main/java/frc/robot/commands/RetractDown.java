@@ -14,7 +14,7 @@ import frc.robot.subsystems.WindmillSubsystem;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class RetractDown extends SequentialCommandGroup {
-  /** Creates a new RetractDown. */
+  /** Creates a new RetractDown, which puts the elevator to a safe passthrough height, then puts the arm in a straight down (pendulum) position. */
   public RetractDown(WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     super(
       new ConditionalCommand(
