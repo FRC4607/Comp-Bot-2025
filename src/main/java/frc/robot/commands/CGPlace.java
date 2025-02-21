@@ -11,26 +11,23 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Calibrations;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class CGPlace extends SequentialCommandGroup {
 
-  /** Creates a new Placement Command group, which will lolipop the arm if necessary, then go to the desired elevator height and arm angle.*/
+  /** Creates a new PlaceL2. */
   public CGPlace(double elevatorHeight, double windmillSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     super(
       new ConditionalCommand(
-        new SetWindmillSetpoint(90, 5, elevator, windmill),
+        new InstantCommand(), 
         new ConditionalCommand(
-          new InstantCommand(),
-          new Retract(windmill, elevator),
-          () -> (windmillSetpoint < 170 && windmillSetpoint > 10)
-        ),
-        () -> elevator.getPosition() > elevatorHeight
-      ), 
-      new SetElevatorSetpoint(elevatorHeight, Calibrations.PlacementCalibrations.kElevatorTolerance, elevator, windmill),
-      new SetWindmillSetpoint(windmillSetpoint, Calibrations.PlacementCalibrations.kWindmillTolerance, elevator, windmill)
+          new InstantCommand(), 
+          new Retract(windmill, elevator), 
+          () -> windmill.getWindmillSetpoint() < 170 && windmill.getWindmillSetpoint() > 10 && windmill.isAtPosition()), 
+        () -> Math.abs(windmillSetpoint - windmill.getWindmillSetpoint()) < 45),
+      new SetElevatorSetpoint(elevatorHeight, Calibrations.PlacementCalibrations.kElevatorTolerance, elevator),
+      new SetWindmillSetpoint(windmillSetpoint, Calibrations.PlacementCalibrations.kWindmillTolerance, windmill)
     );
 
   }

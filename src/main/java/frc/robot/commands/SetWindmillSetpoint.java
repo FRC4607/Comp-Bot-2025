@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -13,15 +12,13 @@ public class SetWindmillSetpoint extends Command {
   /** Creates a new SetWindmillSetpoint. */
 
   private WindmillSubsystem m_windmill;
-  private ElevatorSubsystem m_elevator;
 
   private boolean m_isClimbing;
 
   private double m_newWindmillSetpoint;
   private double m_tolerance;
 
-  public SetWindmillSetpoint(double newWindmillSetpoint, double tolerance, ElevatorSubsystem elevator, WindmillSubsystem windmill) {
-    m_elevator = elevator;
+  public SetWindmillSetpoint(double newWindmillSetpoint, double tolerance, WindmillSubsystem windmill) {
     m_windmill = windmill;
     m_newWindmillSetpoint = newWindmillSetpoint;
     m_tolerance = tolerance;
@@ -33,12 +30,14 @@ public class SetWindmillSetpoint extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("Initialized");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_windmill.setWindmillSetpoint(m_newWindmillSetpoint, false, m_elevator);
+    m_windmill.setWindmillSetpoint(m_newWindmillSetpoint, false);
+    System.out.println("executed");
   }
 
   // Called once the command ends or is interrupted.

@@ -12,12 +12,12 @@ import frc.robot.subsystems.WindmillSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Retract extends SequentialCommandGroup {
 
-  /** Creates a new Retract Command Group, which lolipops the arm and moves the elevator all the way down. */
+  /** Creates a new Retract. */
   public Retract(WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     // Use addRequirements() here to declare subsystem dependencies.
     super(
-      new SetWindmillSetpoint(90, 25, elevator, windmill),
-      new SetElevatorSetpoint(-0.2, 1, elevator, windmill)
+      new SetWindmillSetpoint(90, 90, windmill),
+      new SetElevatorSetpoint(-0.2, 1, elevator)
     );
   }
 }

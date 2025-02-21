@@ -4,19 +4,13 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Calibrations;
 
 public class ManipulatorSubsystem extends SubsystemBase {
 
@@ -24,31 +18,15 @@ public class ManipulatorSubsystem extends SubsystemBase {
 
   private final DutyCycleOut m_request;
 
-  private final VelocityTorqueCurrentFOC m_velocityRequest;
-
   /** Creates a new ManupulatorSubsystem. */
   public ManipulatorSubsystem() {
 
     m_motor = new TalonFX(43, "kachow");
 
     m_request = new DutyCycleOut(0.0);
-
-    m_velocityRequest = new VelocityTorqueCurrentFOC(0);
     
     TalonFXConfiguration config = new TalonFXConfiguration();
 
-    Slot0Configs slot0 = config.Slot0;
-
-    slot0.kS = Calibrations.ManipulatorCalibrations.kManipulatorKS;
-    slot0.kV = Calibrations.ManipulatorCalibrations.kManipulatorKV;
-    slot0.kA = Calibrations.ManipulatorCalibrations.kManipulatorKA;
-    slot0.kP = Calibrations.ManipulatorCalibrations.kManipulatorKP;
-    slot0.kD = Calibrations.ManipulatorCalibrations.kManipulatorKD;
-
-    config.MotionMagic.MotionMagicAcceleration = Calibrations.ManipulatorCalibrations.kManipulatormaxAcceleration;
-
-    config.TorqueCurrent.withPeakForwardTorqueCurrent(Amps.of(100))
-    .withPeakReverseTorqueCurrent(Amps.of(-100));
     m_motor.getConfigurator().apply(config);
   }
 
@@ -57,14 +35,8 @@ public class ManipulatorSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  /**
-   * Sets the velocity of the Manipulator (rpms) using MotionMagic VelocityTorqueCurrentFOC
-   * 
-   * @param newManipulatorVelocity
-   */
   public void setVelocity (double newManipulatorVelocity) {
 
-    m_motor.setControl(m_velocityRequest.withVelocity(newManipulatorVelocity));
-    System.out.println("Velocity changed to: " + newManipulatorVelocity);
+    m_motor.set(newManipulatorVelocity);
   }
 }

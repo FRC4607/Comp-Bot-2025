@@ -14,7 +14,7 @@ public class setElevatorSpeed extends Command {
 
   private double m_newVelocity;
 
-  /** Creates a new setElevatorSpeed. (open loop control) */
+  /** Creates a new setElevatorSpeed. */
   public setElevatorSpeed(double newVelocity, ElevatorSubsystem elevator) {
     m_elevator = elevator;
     m_newVelocity = newVelocity;
