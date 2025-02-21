@@ -6,18 +6,21 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.WindmillSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SetElevatorSetpoint extends Command {
 
   private ElevatorSubsystem m_elevator;
+  private WindmillSubsystem m_windmill;
 
   private double m_newElevatorSetpoint;
   private double m_tolerance;
 
   /** Creates a new SetElevatorSetpoint. */
-  public SetElevatorSetpoint(double newElevatorSetpoint, double tolerance, ElevatorSubsystem elevator) {
+  public SetElevatorSetpoint(double newElevatorSetpoint, double tolerance, ElevatorSubsystem elevator, WindmillSubsystem windmill) {
     m_elevator = elevator;
+    m_windmill = windmill;
     m_newElevatorSetpoint = newElevatorSetpoint;
     m_tolerance = tolerance;
 
@@ -33,7 +36,7 @@ public class SetElevatorSetpoint extends Command {
   @Override
   public void execute() {
 
-    m_elevator.setElevatorSetpoint(m_newElevatorSetpoint);
+    m_elevator.setElevatorSetpoint(m_newElevatorSetpoint, m_windmill);
 
   }
 

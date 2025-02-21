@@ -37,14 +37,14 @@ public class WindmillSubsystem extends SubsystemBase{
     private final CANcoder m_encoder;
 
     // Creates the motion profiler for the arm.
-    private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+    private final MotionMagicTorqueCurrentFOC m_request = new MotionMagicTorqueCurrentFOC(0);
 
     public WindmillSubsystem() {
 
         // Initializes the motor on the windmill.
         m_windmotor = new TalonFX(Constants.WindmillConstants.kWindmillCANID, "kachow");
 
-        m_encoder = new CANcoder(3, "kachow");
+        m_encoder = new CANcoder(Constants.WindmillConstants.kWindmillEncoderCANID, "kachow");
         // Initializes the motion profiler.
 
         TalonFXConfiguration config = new TalonFXConfiguration();
@@ -54,33 +54,36 @@ public class WindmillSubsystem extends SubsystemBase{
         config.ClosedLoopGeneral.ContinuousWrap = true;
         
         encoderConfig.MagnetSensor.MagnetOffset = Calibrations.WindmillCalibrations.kWindmillEncoderOffset;
+        encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.0;
     
         /* Configure gear ratio */
         FeedbackConfigs fdb = config.Feedback;
         fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        fdb.FeedbackRemoteSensorID = 3;
-        fdb.SensorToMechanismRatio = 1; // 12.8 rotor rotations per mechanism rotation
+        fdb.FeedbackRemoteSensorID = Constants.WindmillConstants.kWindmillEncoderCANID;
+        fdb.SensorToMechanismRatio = 1;
         fdb.RotorToSensorRatio = 64.04;
 
-        /* Configure Motion Magic */
+        /* Configure Motion Magic velocity, Acceleration, and Jerk */
         MotionMagicConfigs mm = config.MotionMagic;
-        mm.withMotionMagicCruiseVelocity(RotationsPerSecond.of(0.25)) // 5 (mechanism) rotations per second cruise
-          .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(10)) // Take approximately 0.5 seconds to reach max vel
+        mm.withMotionMagicCruiseVelocity(RotationsPerSecond.of(Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic)) // 5 (mechanism) rotations per second cruise
+          .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic)) // Take approximately 0.5 seconds to reach max vel
           // Take approximately 0.1 seconds to reach max accel 
-          .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(100));
+          .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(Calibrations.WindmillCalibrations.kMaxJerkMotionMagic));
     
+        // Slot 0 gains for MotionMagic
         Slot0Configs slot0 = config.Slot0;
         slot0.kG = Calibrations.WindmillCalibrations.kWindmillkG;
-        slot0.kS = Calibrations.WindmillCalibrations.kWindmillkS; // Add 0.25 V output to overcome static friction
-        slot0.kV = Calibrations.WindmillCalibrations.kWindmillkV; // A velocity target of 1 rps results in 0.12 V output
-        slot0.kA = Calibrations.WindmillCalibrations.kWindmillkA; // An acceleration of 1 rps/s requires 0.01 V output
-        slot0.kP = Calibrations.WindmillCalibrations.kWindmillkP; // A position error of 0.2 rotations results in 12 V output
-        slot0.kD = Calibrations.WindmillCalibrations.kWindmillkD; // A velocity error of 1 rps results in 0.5 V output
+        slot0.kS = Calibrations.WindmillCalibrations.kWindmillkS;
+        slot0.kV = Calibrations.WindmillCalibrations.kWindmillkV;
+        slot0.kA = Calibrations.WindmillCalibrations.kWindmillkA;
+        slot0.kP = Calibrations.WindmillCalibrations.kWindmillkP;
+        slot0.kD = Calibrations.WindmillCalibrations.kWindmillkD;
 
         slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
+        config.CurrentLimits.StatorCurrentLimit = Calibrations.WindmillCalibrations.kMaxWindmillStatorCurrentPerMotor;
+        // config.CurrentLimits.SupplyCurrentLimit = 60;
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
@@ -94,10 +97,12 @@ public class WindmillSubsystem extends SubsystemBase{
    @Override
     public void periodic(){
 
-        SmartDashboard.putNumber("Windmill Position", getPosition());
-        SmartDashboard.putNumber("Windmill Encoder Position", getEncoderPosition());
-        SmartDashboard.putNumber("Windmill Setpoint", getWindmillSetpoint());
-        SmartDashboard.putNumber("Raw Windmill Encoder Postion", getRawEncoderPosition());
+        // SmartDashboard.putNumber("Windmill", m_windmotor.getSupplyCurrent().getValueAsDouble());
+
+        // SmartDashboard.putNumber("Windmill Position", getPosition());
+        // SmartDashboard.putNumber("Windmill Encoder Position", getEncoderPosition());
+        // SmartDashboard.putNumber("Windmill Setpoint", getWindmillSetpoint());
+        // SmartDashboard.putNumber("Raw Windmill Encoder Postion", getRawEncoderPosition());
         
     }
 
@@ -106,11 +111,20 @@ public class WindmillSubsystem extends SubsystemBase{
      * 
      * @param newWindmillSetpoint The new setpoint in degrees.
      */
-    public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing) {
+    public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing, ElevatorSubsystem elevator) {
+        if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && newWindmillSetpoint >= 90 && newWindmillSetpoint < 270) {
+            m_windmotor.setControl(m_request.withPosition(210 / 360));
+            System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+        } else if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && (newWindmillSetpoint >= 270 || newWindmillSetpoint < 90)) {
+            m_windmotor.setControl(m_request.withPosition(330 / 360));
+            System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+        } else {
+            m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint));
+            System.out.println("Windmill Setpoint Set to: " + newWindmillSetpoint);
+        }
 
-        //Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
+        // Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
         m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint / 360));
-        System.out.println("Setpoint Changed");
     }
 
     public void setWindmillSpeed(double newSpeed) {
@@ -137,12 +151,20 @@ public class WindmillSubsystem extends SubsystemBase{
     }
 
     public void applyConfigs() {
-        m_config.Slot0.kG = SmartDashboard.getNumber("windmill kG", Calibrations.WindmillCalibrations.kWindmillkG);
-        m_config.Slot0.kS = SmartDashboard.getNumber("windmill kS", Calibrations.WindmillCalibrations.kWindmillkS);
-        m_config.Slot0.kP = SmartDashboard.getNumber("windmill kP", Calibrations.WindmillCalibrations.kWindmillkP);
-        m_config.Slot0.kD = SmartDashboard.getNumber("windmill kD", Calibrations.WindmillCalibrations.kWindmillkD);
+        // m_config.Slot0.kG = SmartDashboard.getNumber("windmill kG", Calibrations.WindmillCalibrations.kWindmillkG);
+        // m_config.Slot0.kS = SmartDashboard.getNumber("windmill kS", Calibrations.WindmillCalibrations.kWindmillkS);
+        // m_config.Slot0.kP = SmartDashboard.getNumber("windmill kP", Calibrations.WindmillCalibrations.kWindmillkP);
+        // m_config.Slot0.kD = SmartDashboard.getNumber("windmill kD", Calibrations.WindmillCalibrations.kWindmillkD);
 
         m_windmotor.getConfigurator().apply(m_config);
+    }
+
+    public boolean isLeft() {
+        if (getPosition() >= 90 && getPosition() < 270) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

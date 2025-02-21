@@ -15,10 +15,10 @@ import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class CGPlace extends SequentialCommandGroup {
+public class CGAutoPlace extends SequentialCommandGroup {
 
-  /** Creates a new Placement Command group, which will lolipop the arm if necessary, then go to the desired elevator height and arm angle.*/
-  public CGPlace(double elevatorHeight, double windmillSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator) {
+  /** Creates a new Placement Command group. */
+  public CGAutoPlace(double elevatorHeight, double windmillSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator, ManipulatorSubsystem manipulator) {
     super(
       new ConditionalCommand(
         new SetWindmillSetpoint(90, 5, elevator, windmill),
@@ -30,7 +30,8 @@ public class CGPlace extends SequentialCommandGroup {
         () -> elevator.getPosition() > elevatorHeight
       ), 
       new SetElevatorSetpoint(elevatorHeight, Calibrations.PlacementCalibrations.kElevatorTolerance, elevator, windmill),
-      new SetWindmillSetpoint(windmillSetpoint, Calibrations.PlacementCalibrations.kWindmillTolerance, elevator, windmill)
+      new SetWindmillSetpoint(windmillSetpoint, Calibrations.PlacementCalibrations.kWindmillTolerance, elevator, windmill),
+      new SetManipulatorSpeed(() -> -0.25, manipulator, windmill)
     );
 
   }
