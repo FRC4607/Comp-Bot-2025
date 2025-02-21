@@ -45,4 +45,16 @@ public final class Constants {
     public static final int kManipulatorCANID = 40;
 
   }
+
+  /** Constants for the LEDs */
+  public static final class LEDConstants {
+    /** The CAN ID for the CANdle */
+    public static final int kCANdleID = 30;
+    /** Total number of RGB LEDs. */
+    public static final int kRGBCANdleCount = 8;
+    public static final int kRGBSection1Count = 80;
+    public static final int kRGBSection2Count = 60; // Eight onboard LEDs too
+    public static final int kRGBSection3Count = 80; // Eight onboard LEDs too
+    public static final int kRGBCount = kRGBCANdleCount + kRGBSection1Count + kRGBSection2Count + kRGBSection3Count ; 
+}
 }

@@ -13,6 +13,7 @@ import frc.robot.commands.Retract;
 import frc.robot.commands.SetElevatorSetpoint;
 import frc.robot.commands.SetWindmillSetpoint;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
 
 /**
@@ -87,10 +88,18 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    LEDSubsystem.setDisabled();
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    if (1>2){
+      LEDSubsystem.setError();
+    }else{
+      LEDSubsystem.setDisabled();
+    }
+  }
+  
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -103,6 +112,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    LEDSubsystem.setNeutral();
   }
 
   /** This function is called periodically during autonomous. */
@@ -121,6 +131,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    LEDSubsystem.setNeutral();
   }
 
   /** This function is called periodically during operator control. */
