@@ -36,6 +36,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S1FloatStateValue;
+import com.ctre.phoenix6.signals.S2CloseStateValue;
+import com.ctre.phoenix6.signals.S2FloatStateValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -130,6 +132,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Configures the CANdi Closed (tripped) and float (open) states. These settings can vary based on the type of sensor.
     candiConfig.DigitalInputs.S1CloseState = S1CloseStateValue.CloseWhenLow;
     candiConfig.DigitalInputs.S1FloatState = S1FloatStateValue.PullHigh;
+    candiConfig.DigitalInputs.S2CloseState = S2CloseStateValue.CloseWhenLow;
+    candiConfig.DigitalInputs.S2FloatState = S2FloatStateValue.PullHigh;
     m_CaNdi.getConfigurator().apply(candiConfig);
     
     // Applies the configs to all the motors in this subsystem.
@@ -198,12 +202,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if ((m_CaNdi.getS1Closed().getValue().booleanValue() != m_pastCaNdi) && (m_pastCaNdi == false)) {
+    if ((m_CaNdi.getS2Closed().getValue().booleanValue() != m_pastCaNdi) && (m_pastCaNdi == false)) {
       m_elevator1.setPosition(0);
     }
-    m_pastCaNdi = m_CaNdi.getS1Closed().getValue().booleanValue();
+    m_pastCaNdi = m_CaNdi.getS2Closed().getValue().booleanValue();
     
-    SmartDashboard.putBoolean("Candy Bar", m_CaNdi.getS1Closed().getValue().booleanValue());
+    SmartDashboard.putBoolean("Candy Bar", m_CaNdi.getS2Closed().getValue().booleanValue());
     SmartDashboard.putNumber("Elevator Position", getPosition());
   }
 
