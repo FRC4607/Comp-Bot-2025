@@ -143,10 +143,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevator4.getConfigurator().apply(config);
 
     // Sets the neutral mode of all of the elevator motors to Brake Mode.
-    m_elevator1.setNeutralMode(NeutralModeValue.Coast);
-    m_elevator2.setNeutralMode(NeutralModeValue.Coast);
-    m_elevator3.setNeutralMode(NeutralModeValue.Coast);
-    m_elevator4.setNeutralMode(NeutralModeValue.Coast);
+    m_elevator1.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator2.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator3.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator4.setNeutralMode(NeutralModeValue.Brake);
 
     // Declares elevator1 as lead motor. Other motors are set to follow.
     m_follower = new Follower(Constants.ElevatorConstants.kElevator1CANID, false);
