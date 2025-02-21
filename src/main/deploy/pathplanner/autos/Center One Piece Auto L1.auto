@@ -5,19 +5,19 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "RetractDown"
+                }
+              },
               {
                 "type": "path",
                 "data": {
                   "pathName": "Line to Reef (Center)"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "PlaceL1Right"
                 }
               }
             ]
@@ -26,13 +26,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Outtake Piece"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Retract"
+            "name": "Outtake Piece Reverse"
           }
         }
       ]

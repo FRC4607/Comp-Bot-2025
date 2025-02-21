@@ -73,8 +73,11 @@ public class RobotContainer {
         configureBindings();
         
         NamedCommands.registerCommand("PlaceL1Right", new CGPlace(0, 105, m_windmill, m_elevator));
-        NamedCommands.registerCommand("Outtake Piece", new SetManipulatorSpeed(() -> -1, m_manipulator, m_windmill));
+        NamedCommands.registerCommand("PlaceL4Left", new CGPlace(52, 35, m_windmill, m_elevator));
+        NamedCommands.registerCommand("Outtake Piece", new SetManipulatorSpeed(() -> 1, m_manipulator, m_windmill).withTimeout(2));
+        NamedCommands.registerCommand("Outtake Piece Reverse", new SetManipulatorSpeed(() -> -1, m_manipulator, m_windmill).withTimeout(2));
         NamedCommands.registerCommand("Retract", new Retract(m_windmill, m_elevator));
+        NamedCommands.registerCommand("RetractDown", new RetractDown(m_windmill, m_elevator));
 
         autoChooser = AutoBuilder.buildAutoChooser("Center One Piece Auto");
         SmartDashboard.putData("Auto Mode", autoChooser);
