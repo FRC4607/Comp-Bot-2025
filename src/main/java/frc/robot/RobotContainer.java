@@ -79,7 +79,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Retract", new Retract(m_windmill, m_elevator));
         NamedCommands.registerCommand("RetractDown", new RetractDown(m_windmill, m_elevator));
 
-        autoChooser = AutoBuilder.buildAutoChooser("Center One Piece Auto");
+        autoChooser = AutoBuilder.buildAutoChooser("3m test path");
         SmartDashboard.putData("Auto Mode", autoChooser);
     }
 
@@ -102,30 +102,33 @@ public class RobotContainer {
         // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
+        joystick.povUp().onTrue(new SetWindmillSetpoint(90, 0, m_elevator, m_windmill));
+        // joystick.povDown().onTrue(new SetElevatorSetpoint(3, 0, m_elevator, m_windmill));
+
         // reset the field-centric heading on left bumper press
         joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Setpoints for when the robot is on the left side of the reef.
-        joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(52.5, 35, m_windmill, m_elevator));
-        joystick.povLeft().and(joystick.leftBumper()).onTrue(new CGPlace(24, 45, m_windmill, m_elevator));
-        joystick.povRight().and(joystick.leftBumper()).onTrue(new CGPlace(9.5, 45, m_windmill, m_elevator));
-        joystick.povDown().and(joystick.leftBumper()).onTrue(new CGPlace(0, 45, m_windmill, m_elevator));
+        // joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(52.5, 35, m_windmill, m_elevator));
+        // joystick.povLeft().and(joystick.leftBumper()).onTrue(new CGPlace(24, 45, m_windmill, m_elevator));
+        // joystick.povRight().and(joystick.leftBumper()).onTrue(new CGPlace(9.5, 45, m_windmill, m_elevator));
+        // joystick.povDown().and(joystick.leftBumper()).onTrue(new CGPlace(0, 45, m_windmill, m_elevator));
 
-        // Setpoints for when the robot is on the right side of the reef.
-        joystick.povUp().and(joystick.rightBumper()).onTrue(new CGPlace(52.5, 145, m_windmill, m_elevator));
-        joystick.povLeft().and(joystick.rightBumper()).onTrue(new CGPlace(24, 135, m_windmill, m_elevator));
-        joystick.povRight().and(joystick.rightBumper()).onTrue(new CGPlace(9.5, 135, m_windmill, m_elevator));
-        joystick.povDown().and(joystick.rightBumper()).onTrue(new CGPlace(0, 135, m_windmill, m_elevator));
+        // // Setpoints for when the robot is on the right side of the reef.
+        // joystick.povUp().and(joystick.rightBumper()).onTrue(new CGPlace(52.5, 145, m_windmill, m_elevator));
+        // joystick.povLeft().and(joystick.rightBumper()).onTrue(new CGPlace(24, 135, m_windmill, m_elevator));
+        // joystick.povRight().and(joystick.rightBumper()).onTrue(new CGPlace(9.5, 135, m_windmill, m_elevator));
+        // joystick.povDown().and(joystick.rightBumper()).onTrue(new CGPlace(0, 135, m_windmill, m_elevator));
         
         // if (joystick.leftBumper().getAsBoolean() == false && joystick.rightBumper().getAsBoolean() == false) {
         //     joystick.povLeft().onTrue(new CGPlace(22, 0, m_windmill, m_elevator));
         // }
             
-        joystick.a().onTrue(new CGHumanPickup(-60, 34.72, m_windmill, m_elevator));
-        joystick.b().onTrue(new Retract(m_windmill, m_elevator));
-        joystick.x().onTrue(new RetractDown(m_windmill, m_elevator));
+        // joystick.a().onTrue(new CGHumanPickup(-60, 34.72, m_windmill, m_elevator));
+        // joystick.b().onTrue(new Retract(m_windmill, m_elevator));
+        // joystick.x().onTrue(new RetractDown(m_windmill, m_elevator));
 
-        m_manipulator.setDefaultCommand(new SetManipulatorSpeed(() -> (joystick.getLeftTriggerAxis() - joystick.getRightTriggerAxis()), m_manipulator, m_windmill));
+        // m_manipulator.setDefaultCommand(new SetManipulatorSpeed(() -> (joystick.getLeftTriggerAxis() - joystick.getRightTriggerAxis()), m_manipulator, m_windmill));
     
                 // SmartDashboard.putData("Apply Config", new ApplyConfigs(m_windmill, m_elevator));
         

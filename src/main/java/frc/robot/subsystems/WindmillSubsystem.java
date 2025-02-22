@@ -44,7 +44,7 @@ public class WindmillSubsystem extends SubsystemBase{
         // Initializes the motor on the windmill.
         m_windmotor = new TalonFX(Constants.WindmillConstants.kWindmillCANID, "kachow");
 
-        m_encoder = new CANcoder(3, "kachow");
+        m_encoder = new CANcoder(Constants.WindmillConstants.kWindmillEncoderCANID, "kachow");
         // Initializes the motion profiler.
 
         TalonFXConfiguration config = new TalonFXConfiguration();
@@ -59,24 +59,25 @@ public class WindmillSubsystem extends SubsystemBase{
         /* Configure gear ratio */
         FeedbackConfigs fdb = config.Feedback;
         fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        fdb.FeedbackRemoteSensorID = 3;
-        fdb.SensorToMechanismRatio = 1; // 12.8 rotor rotations per mechanism rotation
+        fdb.FeedbackRemoteSensorID = Constants.WindmillConstants.kWindmillEncoderCANID;
+        fdb.SensorToMechanismRatio = 1;
         fdb.RotorToSensorRatio = 64.04;
 
-        /* Configure Motion Magic */
+        /* Configure Motion Magic velocity, Acceleration, and Jerk */
         MotionMagicConfigs mm = config.MotionMagic;
         mm.withMotionMagicCruiseVelocity(RotationsPerSecond.of(Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic)) // 5 (mechanism) rotations per second cruise
           .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic)) // Take approximately 0.5 seconds to reach max vel
           // Take approximately 0.1 seconds to reach max accel 
           .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(Calibrations.WindmillCalibrations.kMaxJerkMotionMagic));
     
+        // Slot 0 gains for MotionMagic
         Slot0Configs slot0 = config.Slot0;
         slot0.kG = Calibrations.WindmillCalibrations.kWindmillkG;
-        slot0.kS = Calibrations.WindmillCalibrations.kWindmillkS; // Add 0.25 V output to overcome static friction
-        slot0.kV = Calibrations.WindmillCalibrations.kWindmillkV; // A velocity target of 1 rps results in 0.12 V output
-        slot0.kA = Calibrations.WindmillCalibrations.kWindmillkA; // An acceleration of 1 rps/s requires 0.01 V output
-        slot0.kP = Calibrations.WindmillCalibrations.kWindmillkP; // A position error of 0.2 rotations results in 12 V output
-        slot0.kD = Calibrations.WindmillCalibrations.kWindmillkD; // A velocity error of 1 rps results in 0.5 V output
+        slot0.kS = Calibrations.WindmillCalibrations.kWindmillkS;
+        slot0.kV = Calibrations.WindmillCalibrations.kWindmillkV;
+        slot0.kA = Calibrations.WindmillCalibrations.kWindmillkA;
+        slot0.kP = Calibrations.WindmillCalibrations.kWindmillkP;
+        slot0.kD = Calibrations.WindmillCalibrations.kWindmillkD;
 
         slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
@@ -98,7 +99,7 @@ public class WindmillSubsystem extends SubsystemBase{
 
         // SmartDashboard.putNumber("Windmill", m_windmotor.getSupplyCurrent().getValueAsDouble());
 
-        // SmartDashboard.putNumber("Windmill Position", getPosition());
+        SmartDashboard.putNumber("Windmill Position", getPosition());
         // SmartDashboard.putNumber("Windmill Encoder Position", getEncoderPosition());
         // SmartDashboard.putNumber("Windmill Setpoint", getWindmillSetpoint());
         // SmartDashboard.putNumber("Raw Windmill Encoder Postion", getRawEncoderPosition());
@@ -119,8 +120,10 @@ public class WindmillSubsystem extends SubsystemBase{
             System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
         } else {
             m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint));
+            System.out.println("Windmill Setpoint Set to: " + newWindmillSetpoint);
         }
-        //Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
+
+        // Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
         m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint / 360));
     }
 

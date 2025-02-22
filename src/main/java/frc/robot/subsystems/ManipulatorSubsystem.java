@@ -40,10 +40,10 @@ public class ManipulatorSubsystem extends SubsystemBase {
     Slot0Configs slot0 = config.Slot0;
 
     slot0.kS = Calibrations.ManipulatorCalibrations.kManipulatorKS;
-    slot0.kV = 0;
-    slot0.kA = 0;
+    slot0.kV = Calibrations.ManipulatorCalibrations.kManipulatorKV;
+    slot0.kA = Calibrations.ManipulatorCalibrations.kManipulatorKA;
     slot0.kP = Calibrations.ManipulatorCalibrations.kManipulatorKP;
-    slot0.kD = 0;
+    slot0.kD = Calibrations.ManipulatorCalibrations.kManipulatorKD;
 
     config.MotionMagic.MotionMagicAcceleration = Calibrations.ManipulatorCalibrations.kManipulatormaxAcceleration;
 
@@ -57,6 +57,11 @@ public class ManipulatorSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  /**
+   * Sets the velocity of the Manipulator (rpms) using MotionMagic VelocityTorqueCurrentFOC
+   * 
+   * @param newManipulatorVelocity
+   */
   public void setVelocity (double newManipulatorVelocity) {
 
     m_motor.setControl(m_velocityRequest.withVelocity(newManipulatorVelocity));
