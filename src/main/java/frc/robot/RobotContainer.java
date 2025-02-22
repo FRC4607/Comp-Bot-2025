@@ -76,21 +76,21 @@ public class RobotContainer {
         NamedCommands.registerCommand("Outtake Piece", new SetManipulatorSpeed(() -> -1, m_manipulator, m_windmill));
         NamedCommands.registerCommand("Retract", new Retract(m_windmill, m_elevator));
 
-        autoChooser = AutoBuilder.buildAutoChooser("Center One Piece Auto");
+        autoChooser = AutoBuilder.buildAutoChooser("3m test path");
         SmartDashboard.putData("Auto Mode", autoChooser);
     }
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        // drivetrain.setDefaultCommand(
-        //     // Drivetrain will execute this command periodically
-        //     drivetrain.applyRequest(() ->
-        //         drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-        //             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-        //             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        //     )
-        // );
+        drivetrain.setDefaultCommand(
+            // Drivetrain will execute this command periodically
+            drivetrain.applyRequest(() ->
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            )
+        );
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -99,11 +99,11 @@ public class RobotContainer {
         // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        joystick.povUp().onTrue(new SetElevatorSetpoint(40, 0, m_elevator, m_windmill));
-        joystick.povDown().onTrue(new SetElevatorSetpoint(3, 0, m_elevator, m_windmill));
+        joystick.povUp().onTrue(new SetWindmillSetpoint(90, 0, m_elevator, m_windmill));
+        // joystick.povDown().onTrue(new SetElevatorSetpoint(3, 0, m_elevator, m_windmill));
 
         // reset the field-centric heading on left bumper press
-        // joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Setpoints for when the robot is on the left side of the reef.
         // joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(52.5, 35, m_windmill, m_elevator));

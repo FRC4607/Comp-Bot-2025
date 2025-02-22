@@ -99,7 +99,7 @@ public class WindmillSubsystem extends SubsystemBase{
 
         // SmartDashboard.putNumber("Windmill", m_windmotor.getSupplyCurrent().getValueAsDouble());
 
-        // SmartDashboard.putNumber("Windmill Position", getPosition());
+        SmartDashboard.putNumber("Windmill Position", getPosition());
         // SmartDashboard.putNumber("Windmill Encoder Position", getEncoderPosition());
         // SmartDashboard.putNumber("Windmill Setpoint", getWindmillSetpoint());
         // SmartDashboard.putNumber("Raw Windmill Encoder Postion", getRawEncoderPosition());
