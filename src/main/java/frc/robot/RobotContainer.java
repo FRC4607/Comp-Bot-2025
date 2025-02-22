@@ -101,7 +101,7 @@ public class RobotContainer {
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         //joystick.povUp().onTrue(new InstantCommand(LEDSubsystem::setClimb).andThen( new SetElevatorSetpoint(20, 0, m_elevator, m_windmill)));
-        joystick.povUp().onTrue(new SetElevatorSetpoint(20, 0, m_elevator, m_windmill));
+        joystick.povUp().onTrue(new InstantCommand(LEDSubsystem::setDisabled));
         joystick.povDown().onTrue(new SetWindmillSetpoint(3, 0, m_elevator, m_windmill));
 
         // reset the field-centric heading on left bumper press

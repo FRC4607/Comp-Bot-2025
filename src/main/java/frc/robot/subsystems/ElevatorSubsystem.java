@@ -198,12 +198,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if ((m_CaNdi.getS1Closed().getValue().booleanValue() != m_pastCaNdi) && (m_pastCaNdi == false)) {
+    if ((getCANdiState() != m_pastCaNdi) && (m_pastCaNdi == false)) {
       m_elevator1.setPosition(0);
     }
-    m_pastCaNdi = m_CaNdi.getS1Closed().getValue().booleanValue();
+    m_pastCaNdi =getCANdiState();
     
-    SmartDashboard.putBoolean("Candy Bar", m_CaNdi.getS1Closed().getValue().booleanValue());
+    SmartDashboard.putBoolean("Candy Bar", getCANdiState());
     SmartDashboard.putNumber("Elevator Position", getPosition());
   }
 
@@ -250,6 +250,10 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public double getSetpoint() {
     return m_request.Position / Constants.ElevatorConstants.kPulleyGearRatio;
+  }
+
+  public boolean getCANdiState() {
+    return m_CaNdi.getS1Closed().getValue().booleanValue();
   }
 
 }
