@@ -20,18 +20,7 @@ public class CGAutoPlace extends SequentialCommandGroup {
   /** Creates a new Placement Command group. */
   public CGAutoPlace(double elevatorHeight, double windmillSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator, ManipulatorSubsystem manipulator) {
     super(
-      new ConditionalCommand(
-        new SetWindmillSetpoint(90, 5, false, elevator, windmill),
-        new ConditionalCommand(
-          new InstantCommand(),
-          new Retract(windmill, elevator),
-          () -> (windmillSetpoint < 170 && windmillSetpoint > 10)
-        ),
-        () -> elevator.getPosition() > elevatorHeight
-      ), 
-      new SetElevatorSetpoint(elevatorHeight, Calibrations.PlacementCalibrations.kElevatorTolerance, false, elevator, windmill),
-      new SetWindmillSetpoint(windmillSetpoint, Calibrations.PlacementCalibrations.kWindmillTolerance, false, elevator, windmill),
-      new SetManipulatorSpeed(() -> -0.25, manipulator, windmill)
+      
     );
 
   }
