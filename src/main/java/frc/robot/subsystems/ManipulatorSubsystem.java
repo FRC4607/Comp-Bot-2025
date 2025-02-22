@@ -29,7 +29,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
   /** Creates a new ManupulatorSubsystem. */
   public ManipulatorSubsystem() {
 
-    m_motor = new TalonFX(43, "kachow");
+    m_motor = new TalonFX(13, "kachow");
 
     m_request = new DutyCycleOut(0.0);
 

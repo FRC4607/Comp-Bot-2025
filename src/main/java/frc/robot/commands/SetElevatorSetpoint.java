@@ -16,13 +16,15 @@ public class SetElevatorSetpoint extends Command {
 
   private double m_newElevatorSetpoint;
   private double m_tolerance;
+  private boolean m_isClimbing;
 
   /** Creates a new SetElevatorSetpoint. */
-  public SetElevatorSetpoint(double newElevatorSetpoint, double tolerance, ElevatorSubsystem elevator, WindmillSubsystem windmill) {
+  public SetElevatorSetpoint(double newElevatorSetpoint, double tolerance, boolean isClimbing, ElevatorSubsystem elevator, WindmillSubsystem windmill) {
     m_elevator = elevator;
     m_windmill = windmill;
     m_newElevatorSetpoint = newElevatorSetpoint;
     m_tolerance = tolerance;
+    m_isClimbing = isClimbing;
 
     addRequirements(m_elevator);
 
@@ -36,7 +38,7 @@ public class SetElevatorSetpoint extends Command {
   @Override
   public void execute() {
 
-    m_elevator.setElevatorSetpoint(m_newElevatorSetpoint, m_windmill);
+    m_elevator.setElevatorSetpoint(m_newElevatorSetpoint, m_isClimbing, m_windmill);
 
   }
 

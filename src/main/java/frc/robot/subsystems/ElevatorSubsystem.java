@@ -20,6 +20,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
+import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -64,7 +65,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private TalonFXConfiguration m_config;
 
-  private final MotionMagicTorqueCurrentFOC m_request;
+  private final DynamicMotionMagicTorqueCurrentFOC m_request;
 
   public ElevatorSubsystem() {
 
@@ -80,7 +81,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Creates a CANdi Configurator
     CANdiConfiguration candiConfig = new CANdiConfiguration();
 
-    final MotionMagicTorqueCurrentFOC request = new MotionMagicTorqueCurrentFOC(0);
+    final DynamicMotionMagicTorqueCurrentFOC request = new DynamicMotionMagicTorqueCurrentFOC(
+      0, 
+      Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic, 
+      Calibrations.ElevatorCalibrations.kMaxAccelerationMotionMagic, 
+      0);
 
     m_request = request;
 
@@ -165,25 +170,44 @@ public class ElevatorSubsystem extends SubsystemBase {
    * 
    * @param newElevatorSetpoint - New setpoint for the elevator in inches.
    */
-  public void setElevatorSetpoint(double newElevatorSetpoint, WindmillSubsystem windmill) {
+  public void setElevatorSetpoint(double newElevatorSetpoint, boolean isClimbing, WindmillSubsystem windmill) {
 
     //Sets the setpoint of elevator1 motor using the MotionMagic Motion Profiler.
     //m_elevator1.setControl(m_motionMagicTorqueCurrentFOC.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio));
-    if (
-      ((
-        windmill.getWindmillSetpoint() < 320 
-        && windmill.getWindmillSetpoint() > 210 
-      )
-      || (
-        windmill.getPosition() < 320 
-      && windmill.getPosition() > 210
-      )) 
-      && newElevatorSetpoint < 25
-      ) {
-      System.out.println("Invalid Elevator Setpoint, automatically set to the safe value of 25 inches");
-      m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio));
+    if (isClimbing) {
+      if (
+        ((
+          windmill.getWindmillSetpoint() < 320 
+          && windmill.getWindmillSetpoint() > 210 
+        )
+        || (
+          windmill.getPosition() < 320 
+        && windmill.getPosition() > 210
+        )) 
+        && newElevatorSetpoint < 25
+        ) {
+        System.out.println("Invalid Elevator Setpoint, automatically set to the safe value of 25 inches");
+        m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio).withAcceleration(1));
     } else {
-      m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio));
+      m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio).withAcceleration(1));
+    }
+    } else {
+      if (
+        ((
+          windmill.getWindmillSetpoint() < 320 
+          && windmill.getWindmillSetpoint() > 210 
+        )
+        || (
+          windmill.getPosition() < 320 
+        && windmill.getPosition() > 210
+        )) 
+        && newElevatorSetpoint < 25
+        ) {
+        System.out.println("Invalid Elevator Setpoint, automatically set to the safe value of 25 inches");
+        m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio).withAcceleration(Calibrations.ElevatorCalibrations.kMaxAccelerationMotionMagic));
+    } else {
+      m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio).withAcceleration(Calibrations.ElevatorCalibrations.kMaxAccelerationMotionMagic));
+    }
     }
   }
 

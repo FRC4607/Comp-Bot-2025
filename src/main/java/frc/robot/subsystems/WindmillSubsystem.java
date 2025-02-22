@@ -4,6 +4,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -37,7 +38,11 @@ public class WindmillSubsystem extends SubsystemBase{
     private final CANcoder m_encoder;
 
     // Creates the motion profiler for the arm.
-    private final MotionMagicTorqueCurrentFOC m_request = new MotionMagicTorqueCurrentFOC(0);
+    private final DynamicMotionMagicTorqueCurrentFOC m_request = new DynamicMotionMagicTorqueCurrentFOC(
+        0, 
+        Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic, 
+        Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic, 
+        Calibrations.WindmillCalibrations.kMaxJerkMotionMagic);
 
     public WindmillSubsystem() {
 
@@ -112,15 +117,29 @@ public class WindmillSubsystem extends SubsystemBase{
      * @param newWindmillSetpoint The new setpoint in degrees.
      */
     public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing, ElevatorSubsystem elevator) {
-        if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && newWindmillSetpoint >= 90 && newWindmillSetpoint < 270) {
-            m_windmotor.setControl(m_request.withPosition(210 / 360));
-            System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
-        } else if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && (newWindmillSetpoint >= 270 || newWindmillSetpoint < 90)) {
-            m_windmotor.setControl(m_request.withPosition(330 / 360));
-            System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+        
+        if (isClimbing) {
+            if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && newWindmillSetpoint >= 90 && newWindmillSetpoint < 270) {
+                m_windmotor.setControl(m_request.withPosition(210 / 360).withAcceleration(0.1));
+                System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+            } else if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && (newWindmillSetpoint >= 270 || newWindmillSetpoint < 90)) {
+                m_windmotor.setControl(m_request.withPosition(330 / 360).withAcceleration(0.1));
+                System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+            } else {
+                m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint).withAcceleration(0.1));
+                System.out.println("Windmill Setpoint Set to: " + newWindmillSetpoint);
+            }
         } else {
-            m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint));
-            System.out.println("Windmill Setpoint Set to: " + newWindmillSetpoint);
+            if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && newWindmillSetpoint >= 90 && newWindmillSetpoint < 270) {
+                m_windmotor.setControl(m_request.withPosition(210 / 360).withAcceleration(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic));
+                System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+            } else if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && (newWindmillSetpoint >= 270 || newWindmillSetpoint < 90)) {
+                m_windmotor.setControl(m_request.withPosition(330 / 360).withAcceleration(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic));
+                System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
+            } else {
+                m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint).withAcceleration(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic));
+                System.out.println("Windmill Setpoint Set to: " + newWindmillSetpoint);
+            }
         }
 
         // Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.

@@ -18,8 +18,8 @@ public class CGHumanPickup extends SequentialCommandGroup {
   public CGHumanPickup(double windmillSetpoint, double elevatorSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     super(
       new RetractDown(windmill, elevator),
-      new SetElevatorSetpoint(elevatorSetpoint, 10, elevator, windmill),
-      new SetWindmillSetpoint(windmillSetpoint, 5, elevator, windmill)
+      new SetElevatorSetpoint(elevatorSetpoint, 10, false, elevator, windmill),
+      new SetWindmillSetpoint(windmillSetpoint, 5, false, elevator, windmill)
     );
   }
 }

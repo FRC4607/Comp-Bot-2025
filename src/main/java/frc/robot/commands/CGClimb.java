@@ -15,23 +15,13 @@ import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class CGPlace extends SequentialCommandGroup {
+public class CGClimb extends SequentialCommandGroup {
 
   /** Creates a new Placement Command group, which will lolipop the arm if necessary, then go to the desired elevator height and arm angle.*/
-  public CGPlace(double elevatorHeight, double windmillSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator) {
+  public CGClimb(WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     super(
-      new ConditionalCommand(
-        new SetWindmillSetpoint(90, 5, false, elevator, windmill),
-        new ConditionalCommand(
-          new InstantCommand(),
-          new Retract(windmill, elevator),
-          () -> (windmillSetpoint < 170 && windmillSetpoint > 10)
-        ),
-        () -> elevator.getPosition() > elevatorHeight
-      ), 
-      new SetElevatorSetpoint(elevatorHeight, Calibrations.PlacementCalibrations.kElevatorTolerance, false, elevator, windmill),
-      new SetWindmillSetpoint(windmillSetpoint, Calibrations.PlacementCalibrations.kWindmillTolerance, false, elevator, windmill)
+      new SetWindmillSetpoint(190, 25, true, elevator, windmill),
+      new SetElevatorSetpoint(-0.2, 1, true, elevator, windmill)
     );
-
   }
 }
