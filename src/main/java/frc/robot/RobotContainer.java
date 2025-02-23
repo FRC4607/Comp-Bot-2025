@@ -65,6 +65,7 @@ public class RobotContainer {
     public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
     public final WindmillSubsystem m_windmill = new WindmillSubsystem();
     public final ManipulatorSubsystem m_manipulator = new ManipulatorSubsystem();
+    private final LEDSubsystem m_leds = new LEDSubsystem();
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
