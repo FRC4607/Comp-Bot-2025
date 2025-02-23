@@ -120,24 +120,24 @@ public class WindmillSubsystem extends SubsystemBase{
         
         if (isClimbing) {
             if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && newWindmillSetpoint >= 90 && newWindmillSetpoint < 270) {
-                m_windmotor.setControl(m_request.withPosition(210 / 360).withAcceleration(0.1));
+                m_windmotor.setControl(m_request.withPosition(210 / 360).withVelocity(0.25));
                 System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
             } else if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && (newWindmillSetpoint >= 270 || newWindmillSetpoint < 90)) {
-                m_windmotor.setControl(m_request.withPosition(330 / 360).withAcceleration(0.1));
+                m_windmotor.setControl(m_request.withPosition(330 / 360).withVelocity(0.25));
                 System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
             } else {
-                m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint).withAcceleration(0.1));
+                m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint).withVelocity(0.25));
                 System.out.println("Windmill Setpoint Set to: " + newWindmillSetpoint);
             }
         } else {
             if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && newWindmillSetpoint >= 90 && newWindmillSetpoint < 270) {
-                m_windmotor.setControl(m_request.withPosition(210 / 360).withAcceleration(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic));
+                m_windmotor.setControl(m_request.withPosition(210 / 360).withAcceleration(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic).withVelocity(Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic));
                 System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
             } else if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && (newWindmillSetpoint >= 270 || newWindmillSetpoint < 90)) {
-                m_windmotor.setControl(m_request.withPosition(330 / 360).withAcceleration(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic));
+                m_windmotor.setControl(m_request.withPosition(330 / 360).withAcceleration(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic).withVelocity(Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic));
                 System.out.println("Invalid Windmill Setpoint, set to the safe value of 210 degrees");
             } else {
-                m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint).withAcceleration(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic));
+                m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint).withAcceleration(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic).withVelocity(Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic));
                 System.out.println("Windmill Setpoint Set to: " + newWindmillSetpoint);
             }
         }

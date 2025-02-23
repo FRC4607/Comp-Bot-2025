@@ -1,5 +1,10 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Second;
+
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Calibrations {
@@ -25,15 +30,15 @@ public class Calibrations {
     public static class WindmillCalibrations {
         
         // The encoder offset for the windmill
-        public static final double kWindmillEncoderOffset = 0.765869140625;
+        public static final double kWindmillEncoderOffset = 0.265869140;
 
         // All of the PID and Feedforward gains for the MotionMagic Motion profiler.
         public static final double kWindmillkG = 10.6;
         public static final double kWindmillkS = 3.0;
         public static final double kWindmillkV = 0;
         public static final double kWindmillkA = 0;
-        public static final double kWindmillkP = 600;
-        public static final double kWindmillkD = 160;
+        public static final double kWindmillkP = 800;
+        public static final double kWindmillkD = 200;
 
         // Motion Magic Configs for the MotionMagicConfigs Class for the Windmill
         public static final double kMaxSpeedMotionMagic = 1;
@@ -75,6 +80,35 @@ public class Calibrations {
         // Value in which the Place Command Group automatically bypasses the retract command if the 
         // new windmill setpoint is within this many degrees of the old one.
         public static final double kWindmillRetractBypassTolerance = 45;
+    }
+    public static class AutoDriveToPositionCalibrations {
+
+        // tolerances for robot position
+        public static final double kAutoAlignTranslationTolerance = 2;
+        public static final double kAutoAlignRotationTolerance = 1;
+
+        // gains for the X-Coordinate PID
+        public static final double kXkP = 5;
+        public static final double kXkI = 0;
+        public static final double kXkD = 0;
+
+        // gains for the Y-Coordinate PID
+        public static final double kYkP = 5;
+        public static final double kYkI = 0;
+        public static final double kYkD = 0;
+
+        // gains for the Rotation PID
+        public static final double kRotationkP = 5;
+        public static final double kRotationkI = 0;
+        public static final double kRotationkD = 0;
+
+        // Translation PID constraints (x-pid and y-pid)
+        public static final LinearVelocity kTranslationMaxVelocity = MetersPerSecond.of(1);
+        public static final LinearAcceleration kTranslationMaxAcceleration = MetersPerSecond.per(Second).of(1);
+
+        // Rotation PID constraints
+        public static final double kRotationMaxVelocity = 1;
+        public static final double kRotationMaxAcceleration = 1;
     }
 }
 

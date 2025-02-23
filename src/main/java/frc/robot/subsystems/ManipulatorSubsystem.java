@@ -65,6 +65,6 @@ public class ManipulatorSubsystem extends SubsystemBase {
   public void setVelocity (double newManipulatorVelocity) {
 
     m_motor.setControl(m_velocityRequest.withVelocity(newManipulatorVelocity));
-    System.out.println("Velocity changed to: " + newManipulatorVelocity);
+    // System.out.println("Velocity changed to: " + newManipulatorVelocity);
   }
 }

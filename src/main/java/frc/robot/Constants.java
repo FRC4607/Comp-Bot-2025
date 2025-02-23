@@ -4,6 +4,15 @@
 
 package frc.robot;
 
+import java.util.List;
+import java.util.stream.Stream;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import static edu.wpi.first.math.util.Units.inchesToMeters;
+import static java.util.stream.Collectors.toUnmodifiableList;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -44,5 +53,47 @@ public final class Constants {
 
     public static final int kManipulatorCANID = 40;
 
+  }
+
+  public static class FieldConstants {
+
+    public static final Transform2d RELATIVE_SCORING_POSE = new Transform2d(
+        inchesToMeters(-40),
+        inchesToMeters(12),
+        Rotation2d.fromDegrees(-90));
+
+    public static final List<Pose2d> REEF_BRANCH_POSES_BLUE = Stream
+        .of(
+            new Pose2d(4.347746, 3.467, Rotation2d.fromDegrees(60)), // 0
+              new Pose2d(4.062584, 3.630770, Rotation2d.fromDegrees(60)), // 1
+              new Pose2d(3.942648, 3.840490, Rotation2d.fromDegrees(0)), // 2
+              new Pose2d(3.942648, 4.169106, Rotation2d.fromDegrees(0)), // 3
+              new Pose2d(4.062584, 4.398912, Rotation2d.fromDegrees(-60)), // 4
+              new Pose2d(4.347175, 4.515, Rotation2d.fromDegrees(-60)), // 5
+              new Pose2d(4.588763, 4.542161, Rotation2d.fromDegrees(-120)), // 6
+              new Pose2d(4.873926, 4.378820, Rotation2d.fromDegrees(-120)), // 7
+              new Pose2d(4.98, 4.215, Rotation2d.fromDegrees(180)), // 8
+              new Pose2d(4.994328, 3.841097, Rotation2d.fromDegrees(180)), // 9
+              new Pose2d(4.95, 3.76, Rotation2d.fromDegrees(120)), // 10
+              new Pose2d(4.589334, 3.466500, Rotation2d.fromDegrees(120)))// 11
+        .map(reefPose -> reefPose.plus(RELATIVE_SCORING_POSE))
+        .collect(toUnmodifiableList());
+
+    public static final List<Pose2d> REEF_BRANCH_POSES_RED = Stream
+        .of(
+            new Pose2d(13.200254, 4.585000, Rotation2d.fromDegrees(-120)), // 0
+              new Pose2d(13.485416, 4.421230, Rotation2d.fromDegrees(-120)), // 1
+              new Pose2d(13.605352, 4.211510, Rotation2d.fromDegrees(-180)), // 2
+              new Pose2d(13.605352, 3.882894, Rotation2d.fromDegrees(-180)), // 3
+              new Pose2d(13.485416, 3.653088, Rotation2d.fromDegrees(120)), // 4
+              new Pose2d(13.200825, 3.537000, Rotation2d.fromDegrees(120)), // 5
+              new Pose2d(12.959237, 3.509839, Rotation2d.fromDegrees(60)), // 6
+              new Pose2d(12.674074, 3.673180, Rotation2d.fromDegrees(60)), // 7
+              new Pose2d(12.568000, 3.837000, Rotation2d.fromDegrees(0)), // 8
+              new Pose2d(12.553672, 4.210903, Rotation2d.fromDegrees(0)), // 9
+              new Pose2d(12.598000, 4.292000, Rotation2d.fromDegrees(-60)), // 10
+              new Pose2d(12.958666, 4.585500, Rotation2d.fromDegrees(-60)))// 11
+        .map(reefPose -> reefPose.plus(RELATIVE_SCORING_POSE))
+        .collect(toUnmodifiableList());
   }
 }

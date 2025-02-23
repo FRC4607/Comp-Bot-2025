@@ -20,7 +20,8 @@ public class CGClimb extends SequentialCommandGroup {
   /** Creates a new Placement Command group, which will lolipop the arm if necessary, then go to the desired elevator height and arm angle.*/
   public CGClimb(WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     super(
-      new SetWindmillSetpoint(190, 25, true, elevator, windmill),
+      new SetElevatorSetpoint(13, 0.5, true, elevator, windmill),
+      new SetWindmillSetpoint(200, 5, true, elevator, windmill).withTimeout(1),
       new SetElevatorSetpoint(-0.2, 1, true, elevator, windmill)
     );
   }
