@@ -48,7 +48,7 @@ public class LEDSubsystem extends SubsystemBase {
     private static LEDSubsystemState m_pastState = null;
 
     private final StrobeAnimation m_noAlliance =        new StrobeAnimation(        255,      0,    255,    0,  0.5,    Constants.LEDConstants.kRGBCount);
-    private final SingleFadeAnimation m_redDisabled =   new SingleFadeAnimation(    255,      20,    0,      0,  0.3,    Constants.LEDConstants.kRGBCount);
+    private final SingleFadeAnimation m_redDisabled =   new SingleFadeAnimation(    255,      0,    0,      0,  0.3,    Constants.LEDConstants.kRGBCount);
     private final SingleFadeAnimation m_blueDisabled =  new SingleFadeAnimation(    0,      0,      255,    0,  0.3,    Constants.LEDConstants.kRGBCount);
     private final LarsonAnimation m_intake =            new LarsonAnimation(        165,    255,    0,      0,  0.25,   Constants.LEDConstants.kRGBCount, LarsonAnimation.BounceMode.Back, 3);
     private final StrobeAnimation m_error =             new StrobeAnimation(        255,      0,    0,      0,  0.5,    Constants.LEDConstants.kRGBCount);
@@ -91,7 +91,7 @@ public class LEDSubsystem extends SubsystemBase {
                 colorUpdate = true;
             }
         }
-        
+
         if ((m_currentState != m_pastState) || colorUpdate) {
             switch (m_currentState) {
                 case DISABLED:
