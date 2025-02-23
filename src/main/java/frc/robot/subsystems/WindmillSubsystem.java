@@ -68,7 +68,7 @@ public class WindmillSubsystem extends SubsystemBase{
         fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         fdb.FeedbackRemoteSensorID = Constants.WindmillConstants.kWindmillEncoderCANID;
         fdb.SensorToMechanismRatio = 1;
-        fdb.RotorToSensorRatio = 64.04;
+        fdb.RotorToSensorRatio = 74.4;
 
         /* Configure Motion Magic velocity, Acceleration, and Jerk */
         MotionMagicConfigs mm = m_config.MotionMagic;

@@ -58,7 +58,7 @@ public class AutoScore extends Command {
       new AutoDriveToPosition(m_targetPose, m_robotPose, m_drivetrain),
       new CGPlace(m_elevatorSetpoint, m_windmillSetpoint, m_windmill, m_elevator),
       new SetManipulatorSpeed(() -> 1, m_manipulator, m_windmill)
-    ).schedule();;
+    ).schedule();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

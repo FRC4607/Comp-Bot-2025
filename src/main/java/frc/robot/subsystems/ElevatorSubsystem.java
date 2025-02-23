@@ -17,6 +17,7 @@ import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
@@ -94,6 +95,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     Slot0Configs slot0Configs = config.Slot0;
 
+    Slot1Configs slot1Configs = config.Slot1;
+
     MotionMagicConfigs magicConfigs = config.MotionMagic;
 
     TorqueCurrentConfigs currentConfig = config.TorqueCurrent;
@@ -114,6 +117,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     slot0Configs.kA = Calibrations.ElevatorCalibrations.kElevatorkA;
     slot0Configs.kP = Calibrations.ElevatorCalibrations.kElevatorkP;
     slot0Configs.kD = Calibrations.ElevatorCalibrations.kElevatorkD;
+
+    slot1Configs.kG = Calibrations.ElevatorCalibrations.kElevatorClimbkG;
+    slot1Configs.kS = Calibrations.ElevatorCalibrations.kElevatorkS;
+    slot1Configs.kV = Calibrations.ElevatorCalibrations.kElevatorkV;
+    slot1Configs.kA = Calibrations.ElevatorCalibrations.kElevatorkA;
+    slot1Configs.kP = Calibrations.ElevatorCalibrations.kElevatorkP;
+    slot1Configs.kD = Calibrations.ElevatorCalibrations.kElevatorkD;
 
     // Configs to be used by the MotionMagicConfigs class
     magicConfigs.MotionMagicCruiseVelocity = Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic;
@@ -186,10 +196,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         )) 
         && newElevatorSetpoint < 25
         ) {
-          m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(12));
+          m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(24).withSlot(1));
           System.out.println("Invalid Elevator Setpoint, automatically set to the safe value of 25 inches");
       } else {
-        m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(12));
+        m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(24).withSlot(1));
         System.out.println("Elevator Setpoint Changed successfully");
       }
     } else {
@@ -205,9 +215,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         && newElevatorSetpoint < 25
         ) {
         System.out.println("Invalid Elevator Setpoint, automatically set to the safe value of 25 inches");
-        m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic));
+        m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic).withSlot(0));
     } else {
-      m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic));
+      m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic).withSlot(0));
     }
     }
   }

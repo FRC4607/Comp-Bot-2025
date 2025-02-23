@@ -123,10 +123,10 @@ public class RobotContainer {
 
         joystick.back().onTrue(new CGPlace(52.5, 90, m_windmill, m_elevator));
         
-        // joystick.povRight().whileTrue(new AutoScore(() -> drivetrain.getState().Pose, 9.5, 135, drivetrain, m_windmill, m_elevator, m_manipulator));
+        //joystick.povRight().whileTrue(new AutoScore(() -> drivetrain.getState().Pose, 9.5, 135, drivetrain, m_windmill, m_elevator, m_manipulator));
         
             
-        joystick.rightBumper().onTrue(new CGHumanPickup(-60, 34.72, m_windmill, m_elevator));
+        joystick.rightBumper().onTrue(new CGHumanPickup(-60, 34.72, m_windmill, m_elevator, m_manipulator));
         joystick.a().onTrue(new CGPlace(0, 10, m_windmill, m_elevator));
 
         joystick.b().onTrue(new Retract(m_windmill, m_elevator));

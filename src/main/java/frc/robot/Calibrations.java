@@ -19,6 +19,10 @@ public class Calibrations {
         public static final double kElevatorkP = 4;
         public static final double kElevatorkD = 0.6;
 
+        // public static final double kElevatorClimbkP = 24;
+        // public static final double kElevatorClimbkD = 10;
+        public static final double kElevatorClimbkG = -10;
+
         // Motion Magic Configs for the MotionMagicConfigs class for the Elevator
         public static final double kMaxSpeedMotionMagic = 500;
 
@@ -52,17 +56,19 @@ public class Calibrations {
     }
     public static class ManipulatorCalibrations {
         
-        public static final double kManipulatorKS = 30;
+        public static final double kManipulatorKS = 6;
         public static final double kManipulatorKV = 0;
         public static final double kManipulatorKA = 0;
-        public static final double kManipulatorKP = 3;
+        public static final double kManipulatorKP = 5;
         public static final double kManipulatorKD = 0;
 
-        public static final double kManipulatormaxAcceleration = 20;
+        public static final double kManipulatormaxAcceleration = 140;
 
         public static final double kManipulatorMaxSpeed = 20;
 
         public static final double kManipulatorMaxStatorCurrent = 100;
+
+        public static final double kCurrentThreshold = 22;
     }
     public static class DriverCalibrations {
 
