@@ -25,7 +25,7 @@ public class Calibrations {
     public static class WindmillCalibrations {
         
         // The encoder offset for the windmill
-        public static final double kWindmillEncoderOffset = 0.765869140625;
+        public static final double kWindmillEncoderOffset = 0.265869140;
 
         // All of the PID and Feedforward gains for the MotionMagic Motion profiler.
         public static final double kWindmillkG = 10.6;
