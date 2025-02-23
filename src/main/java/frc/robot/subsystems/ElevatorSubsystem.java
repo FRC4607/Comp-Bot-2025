@@ -205,9 +205,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         && newElevatorSetpoint < 25
         ) {
         System.out.println("Invalid Elevator Setpoint, automatically set to the safe value of 25 inches");
-        m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio).withAcceleration(Calibrations.ElevatorCalibrations.kMaxAccelerationMotionMagic));
+        m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic));
     } else {
-      m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio).withAcceleration(Calibrations.ElevatorCalibrations.kMaxAccelerationMotionMagic));
+      m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic));
     }
     }
   }
