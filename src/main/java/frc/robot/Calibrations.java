@@ -52,13 +52,13 @@ public class Calibrations {
     }
     public static class ManipulatorCalibrations {
         
-        public static final double kManipulatorKS = 37;
+        public static final double kManipulatorKS = 30;
         public static final double kManipulatorKV = 0;
         public static final double kManipulatorKA = 0;
-        public static final double kManipulatorKP = 10;
+        public static final double kManipulatorKP = 3;
         public static final double kManipulatorKD = 0;
 
-        public static final double kManipulatormaxAcceleration = 0;
+        public static final double kManipulatormaxAcceleration = 20;
 
         public static final double kManipulatorMaxSpeed = 20;
 

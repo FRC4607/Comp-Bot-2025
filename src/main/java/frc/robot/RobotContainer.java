@@ -73,12 +73,12 @@ public class RobotContainer {
         
         configureBindings();
         
-        NamedCommands.registerCommand("PlaceL1Right", new CGPlace(0, 105, m_windmill, m_elevator));
-        NamedCommands.registerCommand("PlaceL4Left", new CGPlace(52, 35, m_windmill, m_elevator));
-        NamedCommands.registerCommand("Outtake Piece", new SetManipulatorSpeed(() -> 1, m_manipulator, m_windmill).withTimeout(2));
-        NamedCommands.registerCommand("Outtake Piece Reverse", new SetManipulatorSpeed(() -> -1, m_manipulator, m_windmill).withTimeout(2));
-        NamedCommands.registerCommand("Retract", new Retract(m_windmill, m_elevator));
-        NamedCommands.registerCommand("RetractDown", new RetractDown(m_windmill, m_elevator));
+        NamedCommands.registerCommand("PlaceL1Right", new CGPlace(0, 105, m_windmill, m_elevator).withTimeout(2));
+        NamedCommands.registerCommand("PlaceL4Left", new CGPlace(52, 35, m_windmill, m_elevator).withTimeout(2));
+        NamedCommands.registerCommand("Outtake Piece", new SetManipulatorSpeed(() -> 1, m_manipulator, m_windmill).withTimeout(0.25));
+        NamedCommands.registerCommand("Outtake Piece Reverse", new SetManipulatorSpeed(() -> -1, m_manipulator, m_windmill).withTimeout(0.25));
+        NamedCommands.registerCommand("Retract", new Retract(m_windmill, m_elevator).withTimeout(2));
+        NamedCommands.registerCommand("RetractDown", new RetractDown(m_windmill, m_elevator).withTimeout(2));
 
         autoChooser = AutoBuilder.buildAutoChooser("3m test path");
         SmartDashboard.putData("Auto Mode", autoChooser);

@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
-  private final boolean kUseLimelight = true;
+  private boolean kUseLimelight = false;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -49,7 +49,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-
   }
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -92,6 +91,7 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    
   }
 
   @Override
@@ -102,6 +102,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     // new SetWindmillSetpoint(m_windmill.getPosition(), 2, m_elevator, m_windmill);
     // new SetElevatorSetpoint(m_elevator.getPosition(), 2, m_elevator, m_windmill);
+    kUseLimelight = false;
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -122,6 +123,8 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
     new SetWindmillSetpoint(m_windmill.getPosition(), 2, false, false, m_elevator, m_windmill);
     new SetElevatorSetpoint(m_elevator.getPosition(), 2, false, m_elevator, m_windmill);
+
+    kUseLimelight = true;
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

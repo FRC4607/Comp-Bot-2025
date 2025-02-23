@@ -25,7 +25,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Outtake Piece"
+            "name": "Outtake Piece Reverse"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Retract"
           }
         }
       ]
