@@ -37,6 +37,8 @@ public class WindmillSubsystem extends SubsystemBase{
 
     private final CANcoder m_encoder;
 
+    private boolean pastGoLongWay = false;
+
     // Creates the motion profiler for the arm.
     private final DynamicMotionMagicTorqueCurrentFOC m_request = new DynamicMotionMagicTorqueCurrentFOC(
         0, 
@@ -52,31 +54,31 @@ public class WindmillSubsystem extends SubsystemBase{
         m_encoder = new CANcoder(Constants.WindmillConstants.kWindmillEncoderCANID, "kachow");
         // Initializes the motion profiler.
 
-        TalonFXConfiguration config = new TalonFXConfiguration();
+        m_config = new TalonFXConfiguration();
 
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
 
-        config.ClosedLoopGeneral.ContinuousWrap = true;
+        m_config.ClosedLoopGeneral.ContinuousWrap = true;
         
         encoderConfig.MagnetSensor.MagnetOffset = Calibrations.WindmillCalibrations.kWindmillEncoderOffset;
         encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.0;
     
         /* Configure gear ratio */
-        FeedbackConfigs fdb = config.Feedback;
+        FeedbackConfigs fdb = m_config.Feedback;
         fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         fdb.FeedbackRemoteSensorID = Constants.WindmillConstants.kWindmillEncoderCANID;
         fdb.SensorToMechanismRatio = 1;
         fdb.RotorToSensorRatio = 64.04;
 
         /* Configure Motion Magic velocity, Acceleration, and Jerk */
-        MotionMagicConfigs mm = config.MotionMagic;
+        MotionMagicConfigs mm = m_config.MotionMagic;
         mm.withMotionMagicCruiseVelocity(RotationsPerSecond.of(Calibrations.WindmillCalibrations.kMaxSpeedMotionMagic)) // 5 (mechanism) rotations per second cruise
           .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(Calibrations.WindmillCalibrations.kMaxAccelerationMotionMagic)) // Take approximately 0.5 seconds to reach max vel
           // Take approximately 0.1 seconds to reach max accel 
           .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(Calibrations.WindmillCalibrations.kMaxJerkMotionMagic));
     
         // Slot 0 gains for MotionMagic
-        Slot0Configs slot0 = config.Slot0;
+        Slot0Configs slot0 = m_config.Slot0;
         slot0.kG = Calibrations.WindmillCalibrations.kWindmillkG;
         slot0.kS = Calibrations.WindmillCalibrations.kWindmillkS;
         slot0.kV = Calibrations.WindmillCalibrations.kWindmillkV;
@@ -86,16 +88,14 @@ public class WindmillSubsystem extends SubsystemBase{
 
         slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.CurrentLimits.StatorCurrentLimit = Calibrations.WindmillCalibrations.kMaxWindmillStatorCurrentPerMotor;
+        m_config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        m_config.CurrentLimits.StatorCurrentLimit = Calibrations.WindmillCalibrations.kMaxWindmillStatorCurrentPerMotor;
         // config.CurrentLimits.SupplyCurrentLimit = 60;
-        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        m_config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-        m_windmotor.getConfigurator().apply(config);
+        m_windmotor.getConfigurator().apply(m_config);
         m_encoder.getConfigurator().apply(encoderConfig);
-
-        m_config = config;
     
     }
 
@@ -116,8 +116,15 @@ public class WindmillSubsystem extends SubsystemBase{
      * 
      * @param newWindmillSetpoint The new setpoint in degrees.
      */
-    public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing, ElevatorSubsystem elevator) {
+    public void setWindmillSetpoint(double newWindmillSetpoint, boolean isClimbing, boolean goLongWay, ElevatorSubsystem elevator) {
         
+        // if (goLongWay) {
+        //     m_config.ClosedLoopGeneral.ContinuousWrap = false;
+        //     m_windmotor.getConfigurator().refresh(m_config.ClosedLoopGeneral);
+        // } else {
+        //     m_config.ClosedLoopGeneral.ContinuousWrap = true;
+        //     m_windmotor.getConfigurator().refresh(m_config.ClosedLoopGeneral);
+        // }
         if (isClimbing) {
             if ((elevator.getPosition() < 24 || elevator.getSetpoint() < 24) && newWindmillSetpoint >= 90 && newWindmillSetpoint < 270) {
                 m_windmotor.setControl(m_request.withPosition(210 / 360).withVelocity(0.25));
@@ -141,6 +148,8 @@ public class WindmillSubsystem extends SubsystemBase{
                 System.out.println("Windmill Setpoint Set to: " + newWindmillSetpoint);
             }
         }
+
+        
 
         // Sets the setpoint of windmill motor using the MotionMagic Motion Profiler.
         m_windmotor.setControl(m_request.withPosition(newWindmillSetpoint / 360));
@@ -180,6 +189,14 @@ public class WindmillSubsystem extends SubsystemBase{
 
     public boolean isLeft() {
         if (getPosition() >= 90 && getPosition() < 270) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isAbove() {
+        if (getPosition() >= 0 && getPosition() < 180) {
             return true;
         } else {
             return false;

@@ -19,15 +19,15 @@ public class RetractDown extends SequentialCommandGroup {
     super(
       new ConditionalCommand(
         new ConditionalCommand(
-          new SetWindmillSetpoint(60, 15, false, elevator, windmill), 
-          new SetWindmillSetpoint(120, 15, false, elevator, windmill), 
+          new SetWindmillSetpoint(60, 15, false, false, elevator, windmill), 
+          new SetWindmillSetpoint(120, 15, false, false, elevator, windmill), 
           () -> windmill.getPosition() >= 90
           ),
         new InstantCommand(),  
       () -> windmill.getPosition() < 170 && windmill.getPosition() > 10
       ),
       new SetElevatorSetpoint(25, 2, false, elevator, windmill),
-      new SetWindmillSetpoint(270, 5, false, elevator, windmill)
+      new SetWindmillSetpoint(270, 5, false, false, elevator, windmill)
     );
   }
 }

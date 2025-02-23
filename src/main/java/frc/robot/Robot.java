@@ -120,7 +120,7 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    new SetWindmillSetpoint(m_windmill.getPosition(), 2, false, m_elevator, m_windmill);
+    new SetWindmillSetpoint(m_windmill.getPosition(), 2, false, false, m_elevator, m_windmill);
     new SetElevatorSetpoint(m_elevator.getPosition(), 2, false, m_elevator, m_windmill);
 
     if (m_autonomousCommand != null) {

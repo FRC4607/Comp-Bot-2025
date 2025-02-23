@@ -21,7 +21,7 @@ public class CGPlace extends SequentialCommandGroup {
   public CGPlace(double elevatorHeight, double windmillSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     super(
       new ConditionalCommand(
-        new SetWindmillSetpoint(90, 5, false, elevator, windmill),
+        new SetWindmillSetpoint(90, 5, false, false, elevator, windmill),
         new ConditionalCommand(
           new InstantCommand(),
           new Retract(windmill, elevator),
@@ -30,7 +30,7 @@ public class CGPlace extends SequentialCommandGroup {
         () -> elevator.getPosition() > elevatorHeight
       ), 
       new SetElevatorSetpoint(elevatorHeight, Calibrations.PlacementCalibrations.kElevatorTolerance, false, elevator, windmill),
-      new SetWindmillSetpoint(windmillSetpoint, Calibrations.PlacementCalibrations.kWindmillTolerance, false, elevator, windmill)
+      new SetWindmillSetpoint(windmillSetpoint, Calibrations.PlacementCalibrations.kWindmillTolerance, false, false, elevator, windmill)
     );
 
   }

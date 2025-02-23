@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
@@ -17,9 +18,15 @@ public class CGHumanPickup extends SequentialCommandGroup {
   /** Creates a new HumanPickupLeft. */
   public CGHumanPickup(double windmillSetpoint, double elevatorSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     super(
-      new RetractDown(windmill, elevator),
-      new SetElevatorSetpoint(elevatorSetpoint, 10, false, elevator, windmill),
-      new SetWindmillSetpoint(windmillSetpoint, 5, false, elevator, windmill)
+      new ParallelCommandGroup(
+      new SetWindmillSetpoint(180, 10, false, false, elevator, windmill),
+      // new ConditionalCommand(
+      //   new InstantCommand(), 
+      //   new RetractDown(windmill, elevator), 
+      //   () -> elevator.getPosition() > 25),
+      new SetElevatorSetpoint(elevatorSetpoint, 10, false, elevator, windmill)
+      ),
+      new SetWindmillSetpoint(windmillSetpoint, 5, false, true, elevator, windmill)
     );
   }
 }

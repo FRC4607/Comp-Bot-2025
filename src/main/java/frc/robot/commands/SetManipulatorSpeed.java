@@ -39,10 +39,27 @@ public class SetManipulatorSpeed extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_windmill.isLeft() == true) {
-      m_manipulator.setVelocity(Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble() * Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed, m_newVelocity.getAsDouble()));
+    
+    if (m_windmill.getPosition() > 80 && m_windmill.getPosition() < 100) {
+      m_manipulator.setVelocity(-Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble() * Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed, m_newVelocity.getAsDouble()));
     } else {
-      m_manipulator.setVelocity(Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble() * Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed, m_newVelocity.getAsDouble()));
+      if (m_windmill.isLeft()) {
+        if (m_windmill.isAbove()) {
+          // negative if in the upper left quadrant
+          m_manipulator.setVelocity(Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble() * Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed, m_newVelocity.getAsDouble()));
+        } else {
+          // positive if in the bottom left quadrant
+          m_manipulator.setVelocity(Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble() * Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed, m_newVelocity.getAsDouble()));
+        }
+      } else {
+        if (m_windmill.isAbove()) {
+          // positive if in the upper right quadrant
+          m_manipulator.setVelocity(-Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble() * Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed, m_newVelocity.getAsDouble()));
+        } else {
+          // negative if in the bottom right quadrant
+          m_manipulator.setVelocity(-Math.copySign(m_newVelocity.getAsDouble() * m_newVelocity.getAsDouble() * Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed, m_newVelocity.getAsDouble()));
+        }   
+      }
     }
   }
 
