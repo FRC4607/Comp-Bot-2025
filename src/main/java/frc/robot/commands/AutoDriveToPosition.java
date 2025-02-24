@@ -37,8 +37,8 @@ public class AutoDriveToPosition extends Command {
   private double m_ySpeed;
   private double m_rotationSpeed;
 
-  private static final Distance m_translationTolerance = Inches.of(Calibrations.AutoDriveToPositionCalibrations.kAutoAlignTranslationTolerance);
-  private static final Angle m_rotationTolerance = Degrees.of(Calibrations.AutoDriveToPositionCalibrations.kAutoAlignRotationTolerance);
+  //private static final Distance m_translationTolerance = Calibrations.AutoDriveToPositionCalibrations.kAutoAlignTranslationTolerance;
+  //private static final Angle m_rotationTolerance = Calibrations.AutoDriveToPositionCalibrations.kAutoAlignRotationTolerance;
 
   private final ProfiledPIDController m_xController;
   private final ProfiledPIDController m_yController;
@@ -127,6 +127,6 @@ public class AutoDriveToPosition extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_xController.atGoal() && m_yController.atGoal() && m_rotationController.atGoal();
   }
 }

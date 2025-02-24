@@ -1,8 +1,13 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Second;
 
+import edu.wpi.first.units.DistanceUnit;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,7 +39,7 @@ public class Calibrations {
     public static class WindmillCalibrations {
         
         // The encoder offset for the windmill
-        public static final double kWindmillEncoderOffset = 0.265869140;
+        public static final double kWindmillEncoderOffset = 0.76708984375;
 
         // All of the PID and Feedforward gains for the MotionMagic Motion profiler.
         public static final double kWindmillkG = 10.6;
@@ -90,7 +95,7 @@ public class Calibrations {
     public static class AutoDriveToPositionCalibrations {
 
         // tolerances for robot position
-        public static final double kAutoAlignTranslationTolerance = 2;
+        public static final double kAutoAlignTranslationTolerance = 0.1;
         public static final double kAutoAlignRotationTolerance = 1;
 
         // gains for the X-Coordinate PID
@@ -104,7 +109,7 @@ public class Calibrations {
         public static final double kYkD = 0;
 
         // gains for the Rotation PID
-        public static final double kRotationkP = 5;
+        public static final double kRotationkP = 12;
         public static final double kRotationkI = 0;
         public static final double kRotationkD = 0;
 

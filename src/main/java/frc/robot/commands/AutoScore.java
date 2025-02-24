@@ -55,9 +55,9 @@ public class AutoScore extends Command {
     m_targetPose = m_robotPose.get().nearest(isRed ? Constants.FieldConstants.REEF_BRANCH_POSES_RED : Constants.FieldConstants.REEF_BRANCH_POSES_BLUE);
 
     new SequentialCommandGroup(
-      new AutoDriveToPosition(m_targetPose, m_robotPose, m_drivetrain),
-      new CGPlace(m_elevatorSetpoint, m_windmillSetpoint, m_windmill, m_elevator),
-      new SetManipulatorSpeed(() -> 1, m_manipulator, m_windmill)
+      new AutoDriveToPosition(m_targetPose, m_robotPose, m_drivetrain).withTimeout(4)//,
+      //new CGPlace(m_elevatorSetpoint, m_windmillSetpoint, m_windmill, m_elevator),
+      //new SetManipulatorSpeed(() -> 1, m_manipulator, m_windmill)
     ).schedule();
   }
 
