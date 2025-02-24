@@ -69,6 +69,10 @@ public class ManipulatorSubsystem extends SubsystemBase {
     // System.out.println("Velocity changed to: " + newManipulatorVelocity);
   }
 
+  public double getManipulatorVelocity() {
+    return m_motor.getVelocity().getValueAsDouble();
+  }
+
   public double getStatorCurrent() {
     return m_motor.getStatorCurrent().getValueAsDouble();
   }

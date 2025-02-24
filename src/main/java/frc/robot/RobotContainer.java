@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -79,6 +80,12 @@ public class RobotContainer {
         NamedCommands.registerCommand("Outtake Piece Reverse", new SetManipulatorSpeed(() -> -1, m_manipulator, m_windmill).withTimeout(0.25));
         NamedCommands.registerCommand("Retract", new Retract(m_windmill, m_elevator).withTimeout(2));
         NamedCommands.registerCommand("RetractDown", new RetractDown(m_windmill, m_elevator).withTimeout(2));
+        NamedCommands.registerCommand("Intake Piece", new CGHumanPickup(-60, 34.72, m_windmill, m_elevator, m_manipulator));
+        NamedCommands.registerCommand("Align", new AutoScore(() -> drivetrain.getState().Pose, 9.5, 135, drivetrain, m_windmill, m_elevator, m_manipulator));
+        NamedCommands.registerCommand("PlaceL4Right", new CGPlace(52, 145, m_windmill, m_elevator).withTimeout(2));
+
+        new EventTrigger("Intake Piece").onTrue(new CGHumanPickup(-60, 34.72, m_windmill, m_elevator, m_manipulator));
+        new EventTrigger("Retract").onTrue((new Retract(m_windmill, m_elevator)));
 
         autoChooser = AutoBuilder.buildAutoChooser("3m test path");
         SmartDashboard.putData("Auto Mode", autoChooser);
@@ -148,4 +155,5 @@ public class RobotContainer {
         /* Run the path selected from the auto chooser */
         return autoChooser.getSelected();
     }
+
 }

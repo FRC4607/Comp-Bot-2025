@@ -7,14 +7,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Calibrations;
 import frc.robot.subsystems.ManipulatorSubsystem;
+import frc.robot.subsystems.WindmillSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Intake extends Command {
 
   private ManipulatorSubsystem m_manipulator;
+  private WindmillSubsystem m_windmill;
   /** Creates a new Intake. */
-  public Intake(ManipulatorSubsystem manipulator) {
+  public Intake(ManipulatorSubsystem manipulator, WindmillSubsystem windmill) {
     m_manipulator = manipulator;
+    m_windmill = windmill;
+    
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_manipulator);
   }
@@ -25,7 +29,7 @@ public class Intake extends Command {
     m_manipulator.setVelocity(Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed);
 
     System.out.println("Manipulator picking up");
-    addRequirements(m_manipulator);
+    new SetManipulatorSpeed(() -> 1.0, m_manipulator, m_windmill);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

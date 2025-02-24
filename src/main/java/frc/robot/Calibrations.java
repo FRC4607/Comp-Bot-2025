@@ -73,7 +73,7 @@ public class Calibrations {
 
         public static final double kManipulatorMaxStatorCurrent = 100;
 
-        public static final double kCurrentThreshold = 22;
+        public static final double kCurrentThreshold = 25;
     }
     public static class DriverCalibrations {
 
@@ -114,8 +114,8 @@ public class Calibrations {
         public static final double kRotationkD = 0;
 
         // Translation PID constraints (x-pid and y-pid)
-        public static final LinearVelocity kTranslationMaxVelocity = MetersPerSecond.of(1);
-        public static final LinearAcceleration kTranslationMaxAcceleration = MetersPerSecond.per(Second).of(1);
+        public static final LinearVelocity kTranslationMaxVelocity = MetersPerSecond.of(3);
+        public static final LinearAcceleration kTranslationMaxAcceleration = MetersPerSecond.per(Second).of(1.5);
 
         // Rotation PID constraints
         public static final double kRotationMaxVelocity = 1;
