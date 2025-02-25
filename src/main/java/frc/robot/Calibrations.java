@@ -32,7 +32,7 @@ public class Calibrations {
         public static final double kMaxSpeedMotionMagic = 500;
 
         public static final double kMaxAccelerationMotionMagic = 600;
-        public static final double kMaxElevatorCurrentPerMotor = 40;
+        public static final double kMaxElevatorCurrentPerMotor = 80;
 
 
     }
@@ -73,7 +73,7 @@ public class Calibrations {
 
         public static final double kManipulatorMaxStatorCurrent = 100;
 
-        public static final double kCurrentThreshold = 25;
+        public static final double kCurrentThreshold = 30;
     }
     public static class DriverCalibrations {
 

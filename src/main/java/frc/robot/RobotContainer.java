@@ -32,6 +32,7 @@ import frc.robot.commands.AutoScore;
 import frc.robot.commands.CGClimb;
 import frc.robot.commands.CGHumanPickup;
 import frc.robot.commands.CGPlace;
+import frc.robot.commands.CGPlaceWithOuttake;
 import frc.robot.commands.Retract;
 import frc.robot.commands.RetractDown;
 import frc.robot.commands.SetElevatorSetpoint;
@@ -74,18 +75,25 @@ public class RobotContainer {
         
         configureBindings();
         
-        NamedCommands.registerCommand("PlaceL1Right", new CGPlace(0, 105, m_windmill, m_elevator).withTimeout(2));
+        // NamedCommands.registerCommand("PlaceL1Right", new CGPlace(0, 105, m_windmill, m_elevator).withTimeout(2));
         NamedCommands.registerCommand("PlaceL4Left", new CGPlace(52, 35, m_windmill, m_elevator).withTimeout(2));
         NamedCommands.registerCommand("Outtake Piece", new SetManipulatorSpeed(() -> 1, m_manipulator, m_windmill).withTimeout(0.25));
         NamedCommands.registerCommand("Outtake Piece Reverse", new SetManipulatorSpeed(() -> -1, m_manipulator, m_windmill).withTimeout(0.25));
         NamedCommands.registerCommand("Retract", new Retract(m_windmill, m_elevator).withTimeout(2));
         NamedCommands.registerCommand("RetractDown", new RetractDown(m_windmill, m_elevator).withTimeout(2));
-        NamedCommands.registerCommand("Intake Piece", new CGHumanPickup(-60, 34.72, m_windmill, m_elevator, m_manipulator));
+        NamedCommands.registerCommand("Intake Piece", new CGHumanPickup(-69, 36.92, m_windmill, m_elevator, m_manipulator));
+
         NamedCommands.registerCommand("Align", new AutoScore(() -> drivetrain.getState().Pose, 9.5, 135, drivetrain, m_windmill, m_elevator, m_manipulator));
         NamedCommands.registerCommand("PlaceL4Right", new CGPlace(52, 145, m_windmill, m_elevator).withTimeout(2));
 
+        new EventTrigger("PlaceL4Left").onTrue(new CGPlaceWithOuttake(52, 35, () -> 1, m_windmill, m_elevator, m_manipulator).withTimeout(2));
+        new EventTrigger("PlaceL4LeftReverse").onTrue(new CGPlaceWithOuttake(52, 35, () -> -1, m_windmill, m_elevator, m_manipulator).withTimeout(2));
+        new EventTrigger("PlaceL4RightReverse").onTrue(new CGPlaceWithOuttake(52, 145, () -> -1, m_windmill, m_elevator, m_manipulator).withTimeout(2));
+        new EventTrigger("Outtake Piece").onTrue(new SetManipulatorSpeed(() -> 1, m_manipulator, m_windmill));
         new EventTrigger("Intake Piece").onTrue(new CGHumanPickup(-60, 34.72, m_windmill, m_elevator, m_manipulator));
         new EventTrigger("Retract").onTrue((new Retract(m_windmill, m_elevator)));
+        
+
 
         autoChooser = AutoBuilder.buildAutoChooser("3m test path");
         SmartDashboard.putData("Auto Mode", autoChooser);
@@ -119,21 +127,21 @@ public class RobotContainer {
         // Setpoints for when the robot is on the left side of the reef.
         joystick.povUp().and(joystick.leftBumper()).onTrue(new CGPlace(52.5, 35, m_windmill, m_elevator));
         joystick.povLeft().and(joystick.leftBumper()).onTrue(new CGPlace(24, 45, m_windmill, m_elevator));
-        //joystick.povRight().and(joystick.leftBumper()).onTrue(new CGPlace(9.5, 45, m_windmill, m_elevator));
+        joystick.povRight().and(joystick.leftBumper()).onTrue(new CGPlace(9.5, 45, m_windmill, m_elevator));
         joystick.povDown().and(joystick.leftBumper()).onTrue(new CGPlace(0, 45, m_windmill, m_elevator));
 
         // // Setpoints for when the robot is on the right side of the reef.
         joystick.povUp().and(joystick.leftBumper().negate()).onTrue(new CGPlace(52.5, 145, m_windmill, m_elevator));
         joystick.povLeft().and(joystick.leftBumper().negate()).onTrue(new CGPlace(24, 135, m_windmill, m_elevator));
-        //joystick.povRight().and(joystick.leftBumper().negate()).onTrue(new CGPlace(9.5, 135, m_windmill, m_elevator));
+        joystick.povRight().and(joystick.leftBumper().negate()).onTrue(new CGPlace(9.5, 135, m_windmill, m_elevator));
         joystick.povDown().and(joystick.leftBumper().negate()).onTrue(new CGPlace(0, 135, m_windmill, m_elevator));
 
         joystick.back().onTrue(new CGPlace(52.5, 90, m_windmill, m_elevator));
         
-        joystick.povRight().whileTrue(new AutoScore(() -> drivetrain.getState().Pose, 9.5, 135, drivetrain, m_windmill, m_elevator, m_manipulator));
+        //joystick.povRight().whileTrue(new AutoScore(() -> drivetrain.getState().Pose, 9.5, 135, drivetrain, m_windmill, m_elevator, m_manipulator));
         
             
-        joystick.rightBumper().onTrue(new CGHumanPickup(-60, 34.72, m_windmill, m_elevator, m_manipulator));
+        joystick.rightBumper().onTrue(new CGHumanPickup(-69, 36.92, m_windmill, m_elevator, m_manipulator));
         joystick.a().onTrue(new CGPlace(0, 10, m_windmill, m_elevator));
 
         joystick.b().onTrue(new Retract(m_windmill, m_elevator));
