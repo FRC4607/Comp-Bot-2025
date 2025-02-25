@@ -103,7 +103,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.1
+                        "waitTime": 0.5
                       }
                     },
                     {
@@ -121,13 +121,51 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "PlaceL4Right"
+                        "name": "PlaceL4Left"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
                         "name": "Outtake Piece Reverse"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "L4 to Human Player (Processor Blue) 2"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Retract"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.2
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Intake Piece"
                       }
                     }
                   ]

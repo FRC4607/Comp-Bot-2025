@@ -73,7 +73,7 @@ public class Calibrations {
 
         public static final double kManipulatorMaxStatorCurrent = 100;
 
-        public static final double kCurrentThreshold = 30;
+        public static final double kCurrentThreshold = 25;
     }
     public static class DriverCalibrations {
 

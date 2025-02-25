@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Line to L4 (Processor Red)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 to Human Player (Processor Red)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Human Player to L4 (Processor Red)"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

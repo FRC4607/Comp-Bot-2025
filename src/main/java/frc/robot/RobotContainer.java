@@ -141,7 +141,7 @@ public class RobotContainer {
         //joystick.povRight().whileTrue(new AutoScore(() -> drivetrain.getState().Pose, 9.5, 135, drivetrain, m_windmill, m_elevator, m_manipulator));
         
             
-        joystick.rightBumper().onTrue(new CGHumanPickup(-69, 36.92, m_windmill, m_elevator, m_manipulator));
+        joystick.rightBumper().onTrue(new CGHumanPickup(-69, 36.92, m_windmill, m_elevator, m_manipulator).withTimeout(4));
         joystick.a().onTrue(new CGPlace(0, 10, m_windmill, m_elevator));
 
         joystick.b().onTrue(new Retract(m_windmill, m_elevator));
