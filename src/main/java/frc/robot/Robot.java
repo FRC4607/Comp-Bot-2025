@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Retract;
 import frc.robot.commands.SetElevatorSetpoint;
 import frc.robot.commands.SetWindmillSetpoint;
+import frc.robot.commands.SwitchLimelightPipelines;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
 
@@ -102,13 +103,14 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     // new SetWindmillSetpoint(m_windmill.getPosition(), 2, m_elevator, m_windmill);
     // new SetElevatorSetpoint(m_elevator.getPosition(), 2, m_elevator, m_windmill);
-    kUseLimelight = false;
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    new SwitchLimelightPipelines(9).schedule();
+    kUseLimelight = true;
   }
 
   /** This function is called periodically during autonomous. */
@@ -124,6 +126,7 @@ public class Robot extends TimedRobot {
     new SetWindmillSetpoint(m_windmill.getPosition(), 2, false, false, m_elevator, m_windmill).schedule();
     new SetElevatorSetpoint(m_elevator.getPosition(), 2, false, m_elevator, m_windmill).schedule();;
 
+    new SwitchLimelightPipelines(0);
     kUseLimelight = true;
 
     if (m_autonomousCommand != null) {

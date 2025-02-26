@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Calibrations;
 import frc.robot.subsystems.ManipulatorSubsystem;
@@ -14,11 +15,18 @@ public class Intake extends Command {
 
   private ManipulatorSubsystem m_manipulator;
   private WindmillSubsystem m_windmill;
+
+  private LinearFilter filter = LinearFilter.movingAverage(10);
+
+  private double[] inputBuffer = {30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0};
+  private double[] outputBuffer = {};
+
   /** Creates a new Intake. */
   public Intake(ManipulatorSubsystem manipulator, WindmillSubsystem windmill) {
     m_manipulator = manipulator;
     m_windmill = windmill;
-    
+
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_manipulator);
   }
@@ -27,6 +35,7 @@ public class Intake extends Command {
   @Override
   public void initialize() {
     m_manipulator.setVelocity(Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed);
+    filter.reset(inputBuffer, outputBuffer);
 
     System.out.println("Manipulator picking up");
     new SetManipulatorSpeed(() -> 1.0, m_manipulator, m_windmill);
@@ -47,6 +56,9 @@ public class Intake extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_manipulator.getStatorCurrent() > Calibrations.ManipulatorCalibrations.kCurrentThreshold ? true : false;
+    var deltaCurrent = m_manipulator.getStatorCurrent() - filter.lastValue();
+    filter.calculate(m_manipulator.getStatorCurrent());
+    
+    return deltaCurrent > Calibrations.ManipulatorCalibrations.kCurrentThreshold;
   }
 }

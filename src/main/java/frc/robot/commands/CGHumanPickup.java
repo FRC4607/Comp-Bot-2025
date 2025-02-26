@@ -28,7 +28,7 @@ public class CGHumanPickup extends SequentialCommandGroup {
       new SetElevatorSetpoint(elevatorSetpoint, 10, false, elevator, windmill)
       ),
       new SetWindmillSetpoint(windmillSetpoint, 15, false, true, elevator, windmill).withTimeout(1),
-      new SetManipulatorSpeed(() -> 1.0, manipulator, windmill).withTimeout(0.05),
+      //new SetManipulatorSpeed(() -> -1.0, manipulator, windmill).withTimeout(0.1),
       new Intake(manipulator, windmill)//,
       //new SetManipulatorSpeed(() -> 1.0, manipulator, windmill).withTimeout(0.05)
     );
