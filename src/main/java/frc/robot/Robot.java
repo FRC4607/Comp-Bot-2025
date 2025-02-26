@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Retract;
 import frc.robot.commands.SetElevatorSetpoint;
 import frc.robot.commands.SetWindmillSetpoint;
+import frc.robot.commands.SwitchLimelightPipelines;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.WindmillSubsystem;
@@ -29,7 +30,7 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
-  private final boolean kUseLimelight = false;
+  private boolean kUseLimelight = false;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -50,7 +51,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-
   }
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -77,10 +77,15 @@ public class Robot extends TimedRobot {
       double headingDeg = driveState.Pose.getRotation().getDegrees();
       double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
 
-      LimelightHelpers.SetRobotOrientation("limelight", headingDeg, 0, 0, 0, 0, 0);
-      var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-      if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
-        m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose, llMeasurement.timestampSeconds);
+      LimelightHelpers.SetRobotOrientation("limelight-one", headingDeg, 0, 0, 0, 0, 0);
+      var llMeasurement1 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-one");
+      LimelightHelpers.SetRobotOrientation("limelight-two", headingDeg, 0, 0, 0, 0, 0);
+      var llMeasurement2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-two");
+      if (llMeasurement1 != null && llMeasurement1.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
+        m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement1.pose, llMeasurement1.timestampSeconds);
+      }
+      if (llMeasurement2 != null && llMeasurement2.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
+        m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement2.pose, llMeasurement2.timestampSeconds);
       }
     }
   }
@@ -107,12 +112,14 @@ public class Robot extends TimedRobot {
     // new SetWindmillSetpoint(m_windmill.getPosition(), 2, m_elevator, m_windmill);
     // new SetElevatorSetpoint(m_elevator.getPosition(), 2, m_elevator, m_windmill);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
     LEDSubsystem.setNeutral();
+    new SwitchLimelightPipelines(9).schedule();
+    kUseLimelight = true;
   }
 
   /** This function is called periodically during autonomous. */
@@ -125,8 +132,11 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    new SetWindmillSetpoint(m_windmill.getPosition(), 2, m_elevator, m_windmill);
-    new SetElevatorSetpoint(m_elevator.getPosition(), 2, m_elevator, m_windmill);
+    new SetWindmillSetpoint(m_windmill.getPosition(), 2, false, false, m_elevator, m_windmill).schedule();
+    new SetElevatorSetpoint(m_elevator.getPosition(), 2, false, m_elevator, m_windmill).schedule();;
+
+    new SwitchLimelightPipelines(0);
+    kUseLimelight = true;
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
@@ -155,4 +165,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  public void EnableLimelight(boolean useLimelight) {
+    kUseLimelight = useLimelight;
+  }
 }

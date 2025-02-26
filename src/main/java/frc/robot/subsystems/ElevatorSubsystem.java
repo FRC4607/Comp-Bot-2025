@@ -17,9 +17,11 @@ import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
+import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -34,6 +36,8 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
+import com.ctre.phoenix6.signals.S1CloseStateValue;
+import com.ctre.phoenix6.signals.S1FloatStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.S2FloatStateValue;
 
@@ -62,7 +66,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private TalonFXConfiguration m_config;
 
-  private final MotionMagicTorqueCurrentFOC m_request;
+  private final DynamicMotionMagicTorqueCurrentFOC m_request;
 
   public ElevatorSubsystem() {
 
@@ -78,7 +82,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Creates a CANdi Configurator
     CANdiConfiguration candiConfig = new CANdiConfiguration();
 
-    final MotionMagicTorqueCurrentFOC request = new MotionMagicTorqueCurrentFOC(0);
+    final DynamicMotionMagicTorqueCurrentFOC request = new DynamicMotionMagicTorqueCurrentFOC(
+      0, 
+      Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic, 
+      Calibrations.ElevatorCalibrations.kMaxAccelerationMotionMagic, 
+      0);
 
     m_request = request;
 
@@ -86,6 +94,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     TalonFXConfiguration config = new TalonFXConfiguration();
 
     Slot0Configs slot0Configs = config.Slot0;
+
+    Slot1Configs slot1Configs = config.Slot1;
 
     MotionMagicConfigs magicConfigs = config.MotionMagic;
 
@@ -108,6 +118,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     slot0Configs.kP = Calibrations.ElevatorCalibrations.kElevatorkP;
     slot0Configs.kD = Calibrations.ElevatorCalibrations.kElevatorkD;
 
+    slot1Configs.kG = Calibrations.ElevatorCalibrations.kElevatorClimbkG;
+    slot1Configs.kS = Calibrations.ElevatorCalibrations.kElevatorkS;
+    slot1Configs.kV = Calibrations.ElevatorCalibrations.kElevatorkV;
+    slot1Configs.kA = Calibrations.ElevatorCalibrations.kElevatorkA;
+    slot1Configs.kP = Calibrations.ElevatorCalibrations.kElevatorkP;
+    slot1Configs.kD = Calibrations.ElevatorCalibrations.kElevatorkD;
+
     // Configs to be used by the MotionMagicConfigs class
     magicConfigs.MotionMagicCruiseVelocity = Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic;
     magicConfigs.MotionMagicAcceleration = Calibrations.ElevatorCalibrations.kMaxAccelerationMotionMagic;
@@ -128,7 +145,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     softLimitConfigs.ForwardSoftLimitThreshold = 88;
     
     // Configures the CANdi Closed (tripped) and float (open) states. These settings can vary based on the type of sensor.
-    candiConfig.DigitalInputs.S2CloseState = S2CloseStateValue.CloseWhenHigh;
+    candiConfig.DigitalInputs.S1CloseState = S1CloseStateValue.CloseWhenLow;
+    candiConfig.DigitalInputs.S1FloatState = S1FloatStateValue.PullHigh;
+    candiConfig.DigitalInputs.S2CloseState = S2CloseStateValue.CloseWhenLow;
     candiConfig.DigitalInputs.S2FloatState = S2FloatStateValue.PullHigh;
     m_CaNdi.getConfigurator().apply(candiConfig);
     
@@ -139,10 +158,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevator4.getConfigurator().apply(config);
 
     // Sets the neutral mode of all of the elevator motors to Brake Mode.
-    m_elevator1.setNeutralMode(NeutralModeValue.Coast);
-    m_elevator2.setNeutralMode(NeutralModeValue.Coast);
-    m_elevator3.setNeutralMode(NeutralModeValue.Coast);
-    m_elevator4.setNeutralMode(NeutralModeValue.Coast);
+    m_elevator1.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator2.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator3.setNeutralMode(NeutralModeValue.Brake);
+    m_elevator4.setNeutralMode(NeutralModeValue.Brake);
 
     // Declares elevator1 as lead motor. Other motors are set to follow.
     m_follower = new Follower(Constants.ElevatorConstants.kElevator1CANID, false);
@@ -161,25 +180,45 @@ public class ElevatorSubsystem extends SubsystemBase {
    * 
    * @param newElevatorSetpoint - New setpoint for the elevator in inches.
    */
-  public void setElevatorSetpoint(double newElevatorSetpoint, WindmillSubsystem windmill) {
+  public void setElevatorSetpoint(double newElevatorSetpoint, boolean isClimbing, WindmillSubsystem windmill) {
 
     //Sets the setpoint of elevator1 motor using the MotionMagic Motion Profiler.
     //m_elevator1.setControl(m_motionMagicTorqueCurrentFOC.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio));
-    if (
-      ((
-        windmill.getWindmillSetpoint() < 320 
-        && windmill.getWindmillSetpoint() > 210 
-      )
-      || (
-        windmill.getPosition() < 320 
-      && windmill.getPosition() > 210
-      )) 
-      && newElevatorSetpoint < 25
-      ) {
-      System.out.println("Invalid Elevator Setpoint, automatically set to the safe value of 25 inches");
-      m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio));
+    if (isClimbing) {
+      if (
+        ((
+          windmill.getWindmillSetpoint() < 320 
+          && windmill.getWindmillSetpoint() > 210 
+        )
+        || (
+          windmill.getPosition() < 320 
+        && windmill.getPosition() > 210
+        )) 
+        && newElevatorSetpoint < 25
+        ) {
+          m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(24).withSlot(1));
+          System.out.println("Invalid Elevator Setpoint, automatically set to the safe value of 25 inches");
+      } else {
+        m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(24).withSlot(1));
+        System.out.println("Elevator Setpoint Changed successfully");
+      }
     } else {
-      m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio));
+      if (
+        ((
+          windmill.getWindmillSetpoint() < 320 
+          && windmill.getWindmillSetpoint() > 210 
+        )
+        || (
+          windmill.getPosition() < 320 
+        && windmill.getPosition() > 210
+        )) 
+        && newElevatorSetpoint < 25
+        ) {
+        System.out.println("Invalid Elevator Setpoint, automatically set to the safe value of 25 inches");
+        m_elevator1.setControl(m_request.withPosition(25 * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic).withSlot(0));
+    } else {
+      m_elevator1.setControl(m_request.withPosition(newElevatorSetpoint * Constants.ElevatorConstants.kPulleyGearRatio).withVelocity(Calibrations.ElevatorCalibrations.kMaxSpeedMotionMagic).withSlot(0));
+    }
     }
   }
 
@@ -198,12 +237,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if ((getCANdiState() != m_pastCaNdi) && (m_pastCaNdi == false)) {
+    if ((m_CaNdi.getS2Closed().getValue().booleanValue() != m_pastCaNdi) && (m_pastCaNdi == false)) {
       m_elevator1.setPosition(0);
     }
-    m_pastCaNdi =getCANdiState();
+    m_pastCaNdi = m_CaNdi.getS2Closed().getValue().booleanValue();
     
-    SmartDashboard.putBoolean("Candy Bar", getCANdiState());
+    SmartDashboard.putBoolean("Candy Bar", m_CaNdi.getS2Closed().getValue().booleanValue());
     SmartDashboard.putNumber("Elevator Position", getPosition());
   }
 

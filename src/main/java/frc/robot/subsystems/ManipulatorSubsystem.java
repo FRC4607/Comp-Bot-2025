@@ -15,6 +15,7 @@ import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Calibrations;
 
@@ -24,16 +25,16 @@ public class ManipulatorSubsystem extends SubsystemBase {
 
   private final DutyCycleOut m_request;
 
-  private final VelocityTorqueCurrentFOC m_velocityRequest;
+  private final MotionMagicVelocityTorqueCurrentFOC m_velocityRequest;
 
   /** Creates a new ManupulatorSubsystem. */
   public ManipulatorSubsystem() {
 
-    m_motor = new TalonFX(43, "kachow");
+    m_motor = new TalonFX(13, "kachow");
 
     m_request = new DutyCycleOut(0.0);
 
-    m_velocityRequest = new VelocityTorqueCurrentFOC(0);
+    m_velocityRequest = new MotionMagicVelocityTorqueCurrentFOC(0);
     
     TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -46,6 +47,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
     slot0.kD = Calibrations.ManipulatorCalibrations.kManipulatorKD;
 
     config.MotionMagic.MotionMagicAcceleration = Calibrations.ManipulatorCalibrations.kManipulatormaxAcceleration;
+
 
     config.TorqueCurrent.withPeakForwardTorqueCurrent(Amps.of(100))
     .withPeakReverseTorqueCurrent(Amps.of(-100));
@@ -65,6 +67,14 @@ public class ManipulatorSubsystem extends SubsystemBase {
   public void setVelocity (double newManipulatorVelocity) {
 
     m_motor.setControl(m_velocityRequest.withVelocity(newManipulatorVelocity));
-    System.out.println("Velocity changed to: " + newManipulatorVelocity);
+    // System.out.println("Velocity changed to: " + newManipulatorVelocity);
+  }
+
+  public double getManipulatorVelocity() {
+    return m_motor.getVelocity().getValueAsDouble();
+  }
+
+  public double getStatorCurrent() {
+    return m_motor.getStatorCurrent().getValueAsDouble();
   }
 }

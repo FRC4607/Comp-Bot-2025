@@ -16,15 +16,18 @@ public class SetWindmillSetpoint extends Command {
   private ElevatorSubsystem m_elevator;
 
   private boolean m_isClimbing;
+  private boolean m_goLongWay;
 
   private double m_newWindmillSetpoint;
   private double m_tolerance;
 
-  public SetWindmillSetpoint(double newWindmillSetpoint, double tolerance, ElevatorSubsystem elevator, WindmillSubsystem windmill) {
+  public SetWindmillSetpoint(double newWindmillSetpoint, double tolerance, boolean isClimbing, boolean goLongWay, ElevatorSubsystem elevator, WindmillSubsystem windmill) {
     m_elevator = elevator;
     m_windmill = windmill;
     m_newWindmillSetpoint = newWindmillSetpoint;
     m_tolerance = tolerance;
+    m_isClimbing = isClimbing;
+    m_goLongWay = goLongWay;
 
     addRequirements(m_windmill);
 
@@ -33,17 +36,20 @@ public class SetWindmillSetpoint extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("windmill setpoint changed to: " + m_newWindmillSetpoint);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_windmill.setWindmillSetpoint(m_newWindmillSetpoint, false, m_elevator);
+    m_windmill.setWindmillSetpoint(m_newWindmillSetpoint, m_isClimbing, m_goLongWay, m_elevator);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    System.out.println("Windmill Reached Setpoint");
+  }
 
   // Returns true when the command should end.
   @Override

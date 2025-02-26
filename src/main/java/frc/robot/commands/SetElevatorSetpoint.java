@@ -16,13 +16,15 @@ public class SetElevatorSetpoint extends Command {
 
   private double m_newElevatorSetpoint;
   private double m_tolerance;
+  private boolean m_isClimbing;
 
   /** Creates a new SetElevatorSetpoint. */
-  public SetElevatorSetpoint(double newElevatorSetpoint, double tolerance, ElevatorSubsystem elevator, WindmillSubsystem windmill) {
+  public SetElevatorSetpoint(double newElevatorSetpoint, double tolerance, boolean isClimbing, ElevatorSubsystem elevator, WindmillSubsystem windmill) {
     m_elevator = elevator;
     m_windmill = windmill;
     m_newElevatorSetpoint = newElevatorSetpoint;
     m_tolerance = tolerance;
+    m_isClimbing = isClimbing;
 
     addRequirements(m_elevator);
 
@@ -30,19 +32,23 @@ public class SetElevatorSetpoint extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    System.out.println("Elevator Setpoint Changed To: " + m_newElevatorSetpoint);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    m_elevator.setElevatorSetpoint(m_newElevatorSetpoint, m_windmill);
+    m_elevator.setElevatorSetpoint(m_newElevatorSetpoint, m_isClimbing, m_windmill);
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    System.out.println("Elevator Reached Setpoint");
+  }
 
   // Returns true when the command should end.
   @Override

@@ -16,8 +16,8 @@ public class Retract extends SequentialCommandGroup {
   public Retract(WindmillSubsystem windmill, ElevatorSubsystem elevator) {
     // Use addRequirements() here to declare subsystem dependencies.
     super(
-      new SetWindmillSetpoint(90, 25, elevator, windmill),
-      new SetElevatorSetpoint(-0.2, 1, elevator, windmill)
+      new SetWindmillSetpoint(90, 25, false, false, elevator, windmill),
+      new SetElevatorSetpoint(-0.3, 1, false, elevator, windmill)
     );
   }
 }
