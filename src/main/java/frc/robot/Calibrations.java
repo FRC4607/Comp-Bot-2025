@@ -26,7 +26,7 @@ public class Calibrations {
 
         // public static final double kElevatorClimbkP = 24;
         // public static final double kElevatorClimbkD = 10;
-        public static final double kElevatorClimbkG = -15;
+        public static final double kElevatorClimbkG = -25;
 
         // Motion Magic Configs for the MotionMagicConfigs class for the Elevator
         public static final double kMaxSpeedMotionMagic = 500;

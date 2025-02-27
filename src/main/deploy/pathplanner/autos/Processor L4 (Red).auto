@@ -179,6 +179,12 @@
           "data": {
             "commands": [
               {
+                "type": "path",
+                "data": {
+                  "pathName": " Human Player to L4 (Processor ed) 2"
+                }
+              },
+              {
                 "type": "sequential",
                 "data": {
                   "commands": [
@@ -219,12 +225,6 @@
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Human Player to L4 (Processor Red) 2"
                 }
               }
             ]

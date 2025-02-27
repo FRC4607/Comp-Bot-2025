@@ -21,6 +21,8 @@ public class SwitchLimelightPipelines extends Command {
   @Override
   public void initialize() {
     LimelightHelpers.setPipelineIndex("limelight-one", m_pipeline);
+    LimelightHelpers.setPipelineIndex("limelight-two", m_pipeline);
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
