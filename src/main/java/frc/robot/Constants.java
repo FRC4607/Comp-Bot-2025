@@ -77,6 +77,7 @@ public final class Constants {
         this.end = start + length;
       }
     }
+  
 
     /** Total number of RGB LEDs. */
     public static final LEDStrip kRGBCANdle = new LEDStrip(0, 8);
@@ -85,6 +86,7 @@ public final class Constants {
     public static final LEDStrip kRGBSection3 = new LEDStrip(30, 11);
     public static final int kRGBCount = kRGBCANdle.length + kRGBSection1.length + kRGBSection2.length
         + kRGBSection3.length; // 40
+  }
 
   public static class FieldConstants {
 
@@ -126,5 +128,6 @@ public final class Constants {
               new Pose2d(12.958666, 4.585500, Rotation2d.fromDegrees(-60)))// E
         .map(reefPose -> reefPose.plus(RELATIVE_SCORING_POSE))
         .collect(toUnmodifiableList());
+    
   }
 }
