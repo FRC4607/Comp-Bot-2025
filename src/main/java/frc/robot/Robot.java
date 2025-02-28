@@ -92,11 +92,18 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    
+
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    if (LimelightHelpers.getCurrentPipelineIndex("limelight-one") != 9) {
+      new SwitchLimelightPipelines(9).schedule();
+    }
+    if (LimelightHelpers.getCurrentPipelineIndex("limelight-two") != 9) {
+      new SwitchLimelightPipelines(9).schedule();
+    }
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override

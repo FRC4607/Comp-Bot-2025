@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ApplyConfigs;
 import frc.robot.commands.AutoScore;
 import frc.robot.commands.CGClimb;
+import frc.robot.commands.CGClimbShallow;
 import frc.robot.commands.CGHumanPickup;
 import frc.robot.commands.CGPlace;
 import frc.robot.commands.CGPlaceWithOuttake;
@@ -148,8 +149,10 @@ public class RobotContainer {
 
         joystick.b().onTrue(new Retract(m_windmill, m_elevator));
         joystick.x().onTrue(new RetractDown(m_windmill, m_elevator));
-        joystick.y().onTrue(new CGPlace(4, 120, m_windmill, m_elevator)).onFalse(new CGClimb(m_windmill, m_elevator));
 
+        // joystick.y().onTrue(new CGPlace(4, 120, m_windmill, m_elevator)).onFalse(new CGClimb(m_windmill, m_elevator));
+        joystick.y().onTrue(new CGPlace(20, 120, m_windmill, m_elevator)).onFalse(new CGClimbShallow(m_windmill, m_elevator));
+        
         m_manipulator.setDefaultCommand(new SetManipulatorSpeed(() -> (-joystick.getRightTriggerAxis() + joystick.getLeftTriggerAxis()), m_manipulator, m_windmill));
     
                 // SmartDashboard.putData("Apply Config", new ApplyConfigs(m_windmill, m_elevator));
