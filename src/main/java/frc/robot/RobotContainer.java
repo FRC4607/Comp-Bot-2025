@@ -83,7 +83,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Outtake Piece Reverse", new SetManipulatorSpeed(() -> -1, m_manipulator, m_windmill).withTimeout(0.25));
         NamedCommands.registerCommand("Retract", new Retract(m_windmill, m_elevator).withTimeout(2));
         NamedCommands.registerCommand("RetractDown", new RetractDown(m_windmill, m_elevator).withTimeout(2));
-        NamedCommands.registerCommand("Intake Piece", new CGHumanPickup(-69, 36.92, m_windmill, m_elevator, m_manipulator).withTimeout(3));
+        NamedCommands.registerCommand("Intake Piece", new CGHumanPickup(-69, 36.92, m_windmill, m_elevator, m_manipulator));
         NamedCommands.registerCommand("Turn Off Limelight", new SwitchLimelightPipelines(9));
         NamedCommands.registerCommand("Turn On Limelight", new SwitchLimelightPipelines(0));
         NamedCommands.registerCommand("Align", new AutoScore(() -> drivetrain.getState().Pose, 9.5, 135, drivetrain, m_windmill, m_elevator, m_manipulator));
