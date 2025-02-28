@@ -150,8 +150,8 @@ public class RobotContainer {
         joystick.b().onTrue(new Retract(m_windmill, m_elevator));
         joystick.x().onTrue(new RetractDown(m_windmill, m_elevator));
 
-        // joystick.y().onTrue(new CGPlace(4, 120, m_windmill, m_elevator)).onFalse(new CGClimb(m_windmill, m_elevator));
-        joystick.y().onTrue(new CGPlace(20, 120, m_windmill, m_elevator)).onFalse(new CGClimbShallow(m_windmill, m_elevator));
+        joystick.y().onTrue(new CGPlace(4, 120, m_windmill, m_elevator)).onFalse(new CGClimb(m_windmill, m_elevator));
+        // joystick.y().onTrue(new CGPlace(20, 120, m_windmill, m_elevator)).onFalse(new CGClimbShallow(m_windmill, m_elevator));
         
         m_manipulator.setDefaultCommand(new SetManipulatorSpeed(() -> (-joystick.getRightTriggerAxis() + joystick.getLeftTriggerAxis()), m_manipulator, m_windmill));
     
