@@ -88,6 +88,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Turn On Limelight", new SwitchLimelightPipelines(0));
         NamedCommands.registerCommand("Align", new AutoScore(() -> drivetrain.getState().Pose, 9.5, 135, drivetrain, m_windmill, m_elevator, m_manipulator));
         NamedCommands.registerCommand("PlaceL4Right", new CGPlace(52, 145, m_windmill, m_elevator).withTimeout(2));
+        NamedCommands.registerCommand("Stop Intake", new SetManipulatorSpeed(() -> 0, m_manipulator, m_windmill));
 
         // new EventTrigger("PlaceL4Left").onTrue(new CGPlaceWithOuttake(52, 35, () -> 1, m_windmill, m_elevator, m_manipulator).withTimeout(2));
         // new EventTrigger("PlaceL4LeftReverse").onTrue(new CGPlaceWithOuttake(52, 35, () -> -1, m_windmill, m_elevator, m_manipulator).withTimeout(2));
