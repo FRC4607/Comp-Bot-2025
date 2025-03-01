@@ -22,7 +22,7 @@ public class CGClimb extends SequentialCommandGroup {
     super(
       new SetElevatorSetpoint(18, 0.5, true, elevator, windmill).withTimeout(1),
       new SetWindmillSetpoint(180, 5, true, false, elevator, windmill).withTimeout(1),
-      new SetElevatorSetpoint(-0.2, 3, true, elevator, windmill)      
+      new SetElevatorSetpoint(-5, 3, true, elevator, windmill)      
 
     );
   }
