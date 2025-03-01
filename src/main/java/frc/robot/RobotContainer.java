@@ -83,7 +83,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Outtake Piece Reverse", new SetManipulatorSpeed(() -> -1, m_manipulator, m_windmill).withTimeout(0.25));
         NamedCommands.registerCommand("Retract", new Retract(m_windmill, m_elevator).withTimeout(2));
         NamedCommands.registerCommand("RetractDown", new RetractDown(m_windmill, m_elevator).withTimeout(2));
-        NamedCommands.registerCommand("Intake Piece", new CGHumanPickup(-69, 36.92, m_windmill, m_elevator, m_manipulator));
+        NamedCommands.registerCommand("Intake Piece", new CGHumanPickup(-69, 36.92, 10, m_windmill, m_elevator, m_manipulator));
         NamedCommands.registerCommand("Turn Off Limelight", new SwitchLimelightPipelines(9));
         NamedCommands.registerCommand("Turn On Limelight", new SwitchLimelightPipelines(0));
         NamedCommands.registerCommand("Align", new AutoScore(() -> drivetrain.getState().Pose, 9.5, 135, drivetrain, m_windmill, m_elevator, m_manipulator));
@@ -144,7 +144,7 @@ public class RobotContainer {
         //joystick.povRight().whileTrue(new AutoScore(() -> drivetrain.getState().Pose, 9.5, 135, drivetrain, m_windmill, m_elevator, m_manipulator));
         
             
-        joystick.rightBumper().onTrue(new CGHumanPickup(-69, 36.92, m_windmill, m_elevator, m_manipulator).withTimeout(4));
+        joystick.rightBumper().onTrue(new CGHumanPickup(-69, 36.92, Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed, m_windmill, m_elevator, m_manipulator).withTimeout(4));
         joystick.a().onTrue(new CGPlace(0, 10, m_windmill, m_elevator));
 
         joystick.b().onTrue(new Retract(m_windmill, m_elevator));

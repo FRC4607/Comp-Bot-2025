@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Calibrations;
 import frc.robot.subsystems.ManipulatorSubsystem;
@@ -15,6 +16,7 @@ public class Intake extends Command {
 
   private ManipulatorSubsystem m_manipulator;
   private WindmillSubsystem m_windmill;
+  private double m_velocity;
 
   private LinearFilter filter = LinearFilter.movingAverage(10);
 
@@ -22,9 +24,10 @@ public class Intake extends Command {
   private double[] outputBuffer = {};
 
   /** Creates a new Intake. */
-  public Intake(ManipulatorSubsystem manipulator, WindmillSubsystem windmill) {
+  public Intake(double velocity, ManipulatorSubsystem manipulator, WindmillSubsystem windmill) {
     m_manipulator = manipulator;
     m_windmill = windmill;
+    m_velocity = velocity;
 
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -34,7 +37,7 @@ public class Intake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_manipulator.setVelocity(Calibrations.ManipulatorCalibrations.kManipulatorMaxSpeed);
+    m_manipulator.setVelocity(m_velocity);
     filter.reset(inputBuffer, outputBuffer);
 
     System.out.println("Manipulator picking up");

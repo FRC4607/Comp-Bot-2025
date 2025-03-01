@@ -17,7 +17,7 @@ import frc.robot.subsystems.WindmillSubsystem;
 public class CGHumanPickup extends SequentialCommandGroup {
 
   /** Creates a new HumanPickupLeft. */
-  public CGHumanPickup(double windmillSetpoint, double elevatorSetpoint, WindmillSubsystem windmill, ElevatorSubsystem elevator, ManipulatorSubsystem manipulator) {
+  public CGHumanPickup(double windmillSetpoint, double elevatorSetpoint, double manipulatorVelocity, WindmillSubsystem windmill, ElevatorSubsystem elevator, ManipulatorSubsystem manipulator) {
     super(
       new ParallelCommandGroup(
       new SetWindmillSetpoint(180, 10, false, false, elevator, windmill),
@@ -29,7 +29,7 @@ public class CGHumanPickup extends SequentialCommandGroup {
       ),
       new SetWindmillSetpoint(windmillSetpoint, 15, false, true, elevator, windmill).withTimeout(1),
       //new SetManipulatorSpeed(() -> -1.0, manipulator, windmill).withTimeout(0.1),
-      new Intake(manipulator, windmill)//,
+      new Intake(manipulatorVelocity, manipulator, windmill)//,
       //new SetManipulatorSpeed(() -> 1.0, manipulator, windmill).withTimeout(0.05)
     );
   }
