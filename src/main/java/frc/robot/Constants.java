@@ -71,9 +71,9 @@ public final class Constants {
 
     /** Total number of RGB LEDs. */
     public static final LEDStrip kRGBCANdle = new LEDStrip(0, 8);
-    public static final LEDStrip kRGBSection1 = new LEDStrip(8, 11);
-    public static final LEDStrip kRGBSection2 = new LEDStrip(19, 10);
-    public static final LEDStrip kRGBSection3 = new LEDStrip(30, 11);
+    public static final LEDStrip kRGBSection1 = new LEDStrip(8, 13);
+    public static final LEDStrip kRGBSection2 = new LEDStrip(21, 12);
+    public static final LEDStrip kRGBSection3 = new LEDStrip(33, 13);
     public static final int kRGBCount = kRGBCANdle.length + kRGBSection1.length + kRGBSection2.length
         + kRGBSection3.length; // 40
 

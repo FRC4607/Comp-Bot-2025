@@ -96,7 +96,8 @@ public class Robot extends TimedRobot {
     if (m_elevator.getCANdiState()){
       LEDSubsystem.setError();
     }else{
-      LEDSubsystem.setDisabled();
+      //LEDSubsystem.setDisabled();
+      LEDSubsystem.setClimb();;
     }
   }
   
