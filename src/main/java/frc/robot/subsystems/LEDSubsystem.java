@@ -54,9 +54,9 @@ public class LEDSubsystem extends SubsystemBase {
     private final StrobeAnimation m_error =             new StrobeAnimation(        255,      0,    0,      0,  0.5,    Constants.LEDConstants.kRGBCount);
     private final TwinkleOffAnimation m_manipulatorNotReady = new TwinkleOffAnimation(    0,      255,    0,      0,  1,      Constants.LEDConstants.kRGBCount, TwinkleOffAnimation.TwinkleOffPercent.Percent64);
     private final StrobeAnimation m_manipulatorReady =        new StrobeAnimation(        255,    0,      0,      0,  1,      Constants.LEDConstants.kRGBCount);
-    private final LarsonAnimation m_climbLEFT=          new LarsonAnimation(        165,    255,    0,      0,  .1,   Constants.LEDConstants.kRGBSection1.length, LarsonAnimation.BounceMode.Back, 4, Constants.LEDConstants.kRGBSection1.start);
-    private final LarsonAnimation m_climbTOP=         new LarsonAnimation(        165,    255,    0,      0,  .1,   Constants.LEDConstants.kRGBSection2.length, LarsonAnimation.BounceMode.Center, 4, Constants.LEDConstants.kRGBSection2.start);
-    private final LarsonAnimation m_climbRIGHT=         new LarsonAnimation(        165,    255,    0,      0,  .1,   Constants.LEDConstants.kRGBSection3.length, LarsonAnimation.BounceMode.Back, 4, Constants.LEDConstants.kRGBSection3.start);
+    private final LarsonAnimation m_climbLEFT=          new LarsonAnimation(        0,    0,    255,      0,  .1,   Constants.LEDConstants.kRGBSection1.length, LarsonAnimation.BounceMode.Back, 4, Constants.LEDConstants.kRGBSection1.start);
+    private final LarsonAnimation m_climbTOP=         new LarsonAnimation(        0,    0,    255,      0,  .5,   Constants.LEDConstants.kRGBSection2.length, LarsonAnimation.BounceMode.Center, 4, Constants.LEDConstants.kRGBSection2.start);
+    private final LarsonAnimation m_climbRIGHT=         new LarsonAnimation(        0,    0,    255,      0,  .1,   Constants.LEDConstants.kRGBSection3.length, LarsonAnimation.BounceMode.Back, 4, Constants.LEDConstants.kRGBSection3.start);
     
    
 
